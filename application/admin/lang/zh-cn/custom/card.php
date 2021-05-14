@@ -1,0 +1,30 @@
+<?php
+
+return [
+    'Card_id'                             => '卡信息ID',
+    'Card_code'                           => '卡面编号',
+    'Card_encode'                         => '卡内码',
+    'Card_custom_id'                      => '客户ID',
+    'Createtime'                          => '开卡时间',
+    'Company_id'                          => '数据归属',
+    'Card_status'                         => '卡状态',
+    'Card_status 0'                       => '正常',
+    'Card_status 1'                       => '挂失',
+    'Card_status 2'                       => '作废',
+	 'Custom_status 0'            	      => '正常',
+    'Custom_status 1'           	 	      => '暂停',
+    'Custom_status 2'             	      => '解约',
+    'Customcustom.custom_id'              => '客户ID',
+    'Customcustom.custom_code'            => '客户编号',
+    'Customcustom.custom_name'            => '客户名称',
+    'Customcustom.custom_customtype_id'   => '客户类型',
+    'Customcustom.custom_businessarea_id' => '业务区',
+    'Customcustom.custom_address'         => '客户地址',
+    'Customcustom.custom_tel'             => '客户电话',
+    'Customcustom.custom_conact'          => '联系人',
+    'Customcustom.custom_status'          => '客户状态',
+    'Customcustom.custom_status 0'        => '正常',
+    'Customcustom.custom_status 1'        => '暂停',
+    'Customcustom.custom_status 2'        => '解约',
+    'Customcustom.company_id'             => '数据归属'
+];

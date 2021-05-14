@@ -1,0 +1,36 @@
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Channel')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-channel" class="form-control" name="row[channel]" type="text" value="{$row.channel|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Channel_ipnc')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-channel_ipnc" class="form-control" name="row[channel_ipnc]" type="text" value="{$row.channel_ipnc|htmlentities}">
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Channel_iotype')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            
+            <div class="radio">
+            {foreach name="channelIotypeList" item="vo"}
+            <label for="row[channel_iotype]-{$key}"><input id="row[channel_iotype]-{$key}" name="row[channel_iotype]" type="radio" value="{$key}" {in name="key" value="$row.channel_iotype"}checked{/in} /> {$vo}</label> 
+            {/foreach}
+            </div>
+
+        </div>
+    </div>
+   
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+</form>

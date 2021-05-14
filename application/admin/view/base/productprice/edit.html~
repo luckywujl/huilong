@@ -1,0 +1,49 @@
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+
+   
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Productprice_product_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-productprice_product_id" disabled="disabled" data-rule="required" data-source="base/product/index" data-field="product_name" data-primary-key="product_ID" class="form-control selectpage" name="row[productprice_product_id]" type="text" value="{$row.productprice_product_id|htmlentities}">
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Productprice_unit')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-productprice_unit" disabled="disabled" class="form-control" name="row[productprice_unit]" type="text" value="{$row.productprice_unit|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Productprice_customtype_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-productprice_customtype_id" data-rule="required" data-source="custom/customtype/index" data-field="customtype" data-primary-key="customtype_ID" class="form-control selectpage" name="row[productprice_customtype_id]" type="text" value="{$row.productprice_customtype_id|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Productprice_price')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-productprice_price" class="form-control" name="row[productprice_price]" type="number" value="{$row.productprice_price|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Productprice_begin_time')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-productprice_begin_time" class="form-control datetimepicker" data-date-format="HH:mm:ss" data-use-current="true" name="row[productprice_begin_time]" type="text" value="{:$row.productprice_begin_time?datetime($row.productprice_begin_time):''}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Productprice_end_time')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-productprice_end_time" class="form-control datetimepicker" data-date-format="HH:mm:ss" data-use-current="true" name="row[productprice_end_time]" type="text" value="{:$row.productprice_end_time?datetime($row.productprice_end_time):''}">
+        </div>
+    </div>
+   
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+</form>

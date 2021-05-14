@@ -1,0 +1,41 @@
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Card_code')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-card_code" class="form-control" name="row[card_code]" type="text" value="{$row.card_code|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Card_encode')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-card_encode" class="form-control" name="row[card_encode]" type="text" value="{$row.card_encode|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Card_custom_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-card_custom_id" data-rule="required" data-source="custom/custom/index" data-field = "custom_name" data-primary-key = "custom_id" class="form-control selectpage" name="row[card_custom_id]" type="text" value="{$row.card_custom_id|htmlentities}">
+        </div>
+    </div>
+   
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Card_status')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            
+            <div class="radio">
+            {foreach name="cardStatusList" item="vo"}
+            <label for="row[card_status]-{$key}"><input id="row[card_status]-{$key}" name="row[card_status]" type="radio" value="{$key}" {in name="key" value="$row.card_status"}checked{/in} /> {$vo}</label> 
+            {/foreach}
+            </div>
+
+        </div>
+    </div>
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+</form>

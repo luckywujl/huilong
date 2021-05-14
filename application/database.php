@@ -18,11 +18,11 @@ return [
     // 服务器地址
     'hostname'        => Env::get('database.hostname', '127.0.0.1'),
     // 数据库名
-    'database'        => Env::get('database.database', 'bal_haxxj_com'),
+    'database'        => Env::get('database.database', 'huilong_haxxj_com'),
     // 用户名
-    'username'        => Env::get('database.username', 'bal_haxxj_com'),
+    'username'        => Env::get('database.username', 'huilong_haxxj_com'),
     // 密码
-    'password'        => Env::get('database.password', 'bal_haxxj_com'),
+    'password'        => Env::get('database.password', 'huilong_haxxj_com'),
     // 端口
     'hostport'        => Env::get('database.hostport', ''),
     // 连接dsn

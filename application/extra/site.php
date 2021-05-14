@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'name' => '润淮农批',
+    'name' => '汇隆水果',
     'beian' => '',
     'cdnurl' => '',
     'version' => '1.0.1',

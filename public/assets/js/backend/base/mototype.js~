@@ -27,7 +27,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {checkbox: true},
                         //{field: 'mototype_id', title: __('Mototype_id')},
                         {field: 'mototype', title: __('Mototype'), operate: 'LIKE'},
-                        {field: 'mototype_tare', title: __('Mototype_tare')},
                         {field: 'mototype_limitweight', title: __('Mototype_limitweight')},
                         //{field: 'company_id', title: __('Company_id'), operate: 'LIKE'},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}

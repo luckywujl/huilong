@@ -72,7 +72,7 @@ class Indetail extends Backend
                 
                 $params['iodetail_iotype'] = 1;//出入类型为入
                 $params['iodetail_status'] = 0;//初始为在场状态
-                $params['iodetail_iotime'] = time();//初始为在场状态
+                $params['iodetail_iotime'] = date();//初始为在场状态
                 $params['iodetail_operator'] = $this->auth->nickname;//添加操作员信息
                 $custom = new custom\Custom();
                 $custom_info = $custom

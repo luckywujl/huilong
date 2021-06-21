@@ -18,9 +18,9 @@
             <input id="c-iodetail_mototype"  data-source="base/mototype/index" data-field = "mototype" data-primary-key="mototype" class="form-control selectpage" name="row[iodetail_mototype]" type="text">
         </div>
     
-        <label class="control-label col-xs-12 col-sm-1">{:__('Iodetail_iotime')}:</label>
+        <label class="control-label col-xs-12 col-sm-1">{:__('Iodetail_tare')}:</label>
         <div class="col-xs-12 col-sm-2">
-            <input id="c-iodetail_iotime" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[iodetail_iotime]" type="text" value="{:date('Y-m-d H:i:s')}">
+            <input id="c-iodetail_tare" data-rule="required" class="form-control"  name="row[iodetail_tare]" type="number">
         </div>
     
         <label class="control-label col-xs-12 col-sm-1">{:__('Iodetail_channel')}:</label>
@@ -109,7 +109,8 @@
         <div class="col-xs-12 col-sm-8">
             <button type="button" class="btn btn-info btn-embossed btn-getinfo">{:__('获取信息')}</button>
             <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
-            <button type="button" class="btn btn-info btn-embossed btn-accept">{:__('确定')}</button>
+            <button type="button" class="btn btn-info btn-embossed btn-accept">{:__('离场收费')}</button>
+            <button type="button" class="btn btn-success btn-embossed btn-statement">{:__('进场收费')}</button>
         </div>
     </div>
    <hr align="left" size="1" width="90%" >

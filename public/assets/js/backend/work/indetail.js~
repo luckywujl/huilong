@@ -108,7 +108,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
          	 function (data,ret) { //success 用于接收主表控制器发过来的数据
          	   $("#c-iodetail_plate_number").val(data.channel_plate_number);
          	   $("#c-iodetail_weight").val(data.channel_weight);
-         	   //在此处加入根据车牌号获取车型型的代码
          		console.info(data);     													      
                return false;    															
            	},function(data){
@@ -120,7 +119,13 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
  		   	 
 				});
 				
-				
+				//定时读取服务器端的重量数据和车牌信息并更新时间
+				setInterval(function(){
+  				  //$(".btn-refresh").trigger("click");
+  				 //更新页面时间
+  				 var myDate = new Date();
+  				 $("#c-iodetail_iotime").val(myDate.getFullYear()+'-'+(myDate.getMonth()+1)+'-'+myDate.getDate()+" "+myDate.getHours()+':'+myDate.getMinutes()+':'+myDate.getSeconds());
+				}, 1000);
 				
 				//输入卡号或内码，按回车键，到库里查找卡信息
 				$("#c-iodetail_card_code").bind("keypress",function (event) {

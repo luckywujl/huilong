@@ -1,4 +1,4 @@
-define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function ($, undefined, Backend, Table,Form,Printing) {
+define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing','selectpage'], function ($, undefined, Backend, Table,Form,Printing) {
 
 
     
@@ -98,8 +98,18 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
                     });		
 				});
 				
+				//选择车型 
+				//$('#c-iodetail_mototype').selectPage({
+					
+				//});
+				
 				//获取信息
 				$(document).on("click",".btn-getinfo",function () {
+					//通道信息为空则提示错误并退出
+					if ($("#c-iodetail_channel").val()=="") {
+					 Toastr.error("通道信息为空");
+					 exit;
+					}
 				 //获取车牌识别结果和称重结果
   				 Fast.api.ajax({
         			url:'base/channel/getinchannelinfo',        													     
@@ -108,7 +118,11 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
          	 function (data,ret) { //success 用于接收主表控制器发过来的数据
          	   $("#c-iodetail_plate_number").val(data.channel_plate_number);
          	   $("#c-iodetail_weight").val(data.channel_weight);
-         	   //在此处加入根据车牌号获取车型型的代码
+         	   $("#c-iodetail_tare").val(data.moto_tare);
+         	   $("#c-iodetail_mototype").val(data.moto_type);
+         	   //$("#c-iodetail_mototype").selectPageClear();
+         	   //$("#c-iodetail_mototype").val(data.moto_type);
+         	   $("#c-iodetail_mototype").selectPageRefresh();
          		console.info(data);     													      
                return false;    															
            	},function(data){

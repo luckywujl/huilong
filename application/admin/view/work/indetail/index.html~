@@ -15,7 +15,7 @@
     
         <label class="control-label col-xs-12 col-sm-1">{:__('Iodetail_mototype')}:</label>
         <div class="col-xs-12 col-sm-1">
-            <input id="c-iodetail_mototype"  data-source="base/mototype/index" data-field = "mototype" data-primary-key="mototype" class="form-control selectpage" name="row[iodetail_mototype]" type="text">
+            <input id="c-iodetail_mototype" width="10" class="form-control" name="row[iodetail_mototype]" type="text">
         </div>
     
         <label class="control-label col-xs-12 col-sm-1">{:__('Iodetail_tare')}:</label>

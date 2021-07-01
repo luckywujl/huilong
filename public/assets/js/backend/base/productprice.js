@@ -33,10 +33,10 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         //{field: 'productprice_product_id', title: __('Productprice_product_id')},
                        // {field: 'productprice_producttype_id', title: __('Productprice_producttype_id')},
                         {field: 'productprice_unit', title: __('Productprice_unit'), operate: 'LIKE'},
-                        {field: 'customtype.customtype', title: __('customtype.customtype'),  sortable:true,operate: 'LIKE'},
+                        {field: 'productprice_customtype', title: __('Productprice_customtype'),  sortable:true,operate: 'LIKE'},
 								                       
-                        {field: 'productprice_begin_time', title: __('Productprice_begin_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime, datetimeFormat:"HH:mm:ss"},
-                        {field: 'productprice_end_time', title: __('Productprice_end_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime, datetimeFormat:"HH:mm:ss"},
+                        {field: 'productprice_begin_time', title: __('Productprice_begin_time'), operate:'RANGE'},
+                        {field: 'productprice_end_time', title: __('Productprice_end_time'), operate:'RANGE'},
                         {field: 'productprice_price', title: __('Productprice_price'), operate:'BETWEEN'},
                          
 								//{field: 'company_id', title: __('Company_id')},

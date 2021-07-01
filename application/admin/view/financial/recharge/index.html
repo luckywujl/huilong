@@ -30,13 +30,18 @@
      </div>
      <div class="form-group">
         <label class="control-label col-xs-12 col-sm-1">{:__('Custom_account1')}:</label>  
-        <div class="col-xs-12 col-sm-2" >   
+        <div class="col-xs-12 col-sm-1" >   
             <input id="c-custom_account" readonly="readonly"  class="form-control "  name="row[custom_account]" type="number" value="">              
             
         </div>
         <label class="control-label col-xs-12 col-sm-1">{:__('Recharge_amount')}:</label>
-        <div class="col-xs-12 col-sm-2">
+        <div class="col-xs-12 col-sm-1">
             <input id="c-account_amount" data-rule="required" class="form-control" name="row[account_amount]" type="number">
+        </div>
+        
+        <label class="control-label col-xs-12 col-sm-1">{:__('Account_cost')}:</label>
+        <div class="col-xs-12 col-sm-1">
+            <input id="c-account_cost" data-rule="required" class="form-control" name="row[account_cost]" type="number">
         </div>
   
         <label class="control-label col-xs-12 col-sm-1">{:__('Account_paymentmode')}:</label>

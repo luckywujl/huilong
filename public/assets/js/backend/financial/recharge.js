@@ -26,7 +26,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
                         {field: 'account_date', title: __('Account_date'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                         {field: 'account_type', title: __('Account_type'), searchList: {"0":__('Account_type 0'),"1":__('Account_type 1')}, formatter: Table.api.formatter.normal},
                         {field: 'account_object', title: __('Account_object'), operate: 'LIKE'},
-                        //{field: 'account_custom_id', title: __('Account_custom_id')},
+                        {field: 'account_cost', title: __('Account_cost'), operate:'BETWEEN'},
                         {field: 'account_amount', title: __('Account_amount'), operate:'BETWEEN'},
                         {field: 'account_paymentmode', title: __('Account_paymentmode'), operate: 'LIKE'},
                         {field: 'account_operator', title: __('Account_operator'), operate: 'LIKE'},

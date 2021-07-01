@@ -20,7 +20,7 @@ class Motoinfo extends Backend
     protected $searchFields = 'plate_number';
     protected $dataLimit = 'personal';
     protected $dataLimitField = 'company_id';
-
+    
     public function _initialize()
     {
         parent::_initialize();

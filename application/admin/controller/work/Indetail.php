@@ -7,6 +7,7 @@ use think\Db;
 use app\admin\model\custom as custom;
 use app\admin\model\base as base;
 use app\admin\model\work as work;
+use app\admin\model\financial as financial;
 
 /**
  * 进/出明细
@@ -24,7 +25,7 @@ class Indetail extends Backend
     protected $searchFields = 'iodetail_plate_number,iodetail_code,iodetail_card_code,customcustom.custom_name,customcustom.custom_tel';
     protected $dataLimit = 'personal';
     protected $dataLimitField = 'company_id';
-    protected $noNeedRight = ['list','getindetailinfobyid','getindetailinfobyplate','getindetailinfobycard','getoutdetailinfo'];
+    protected $noNeedRight = ['add','list','getindetailinfobyid','getindetailinfobyplate','getindetailinfobycard','getoutdetailinfo'];
 
     public function _initialize()
     {
@@ -74,6 +75,7 @@ class Indetail extends Backend
                 $params['iodetail_status'] = 0;//初始为在场状态
                 $params['iodetail_iotime'] = time();//初始为在场状态
                 $params['iodetail_operator'] = $this->auth->nickname;//添加操作员信息
+                $params['iodetail_weight'] = $params['iodetail_GW'];
                 $custom = new custom\Custom();
                 $custom_info = $custom
                 ->where(['custom_id'=>$params['iodetail_custom_id'],'custom_status'=>0,'company_id'=>$this->auth->company_id])//商户状态为正常
@@ -104,39 +106,7 @@ class Indetail extends Backend
                     //$this->error(__('No rows were inserted'));
                     
                     $iodetail['iodetail_id'] =$this->model->iodetail_ID;//进场单ID	
-                    //如查是采购方，可视为空车，将空车车皮重写入库中
-                    if($customtype_info['customtype_attribute']==1) {
-                    	$info =[];
-                    	$info['moto_platenumber'] = $this->model->iodetail_plate_number;
-                    	$info['moto_type'] =$this->model->iodetail_mototype;
-                    	$info['moto_tare'] =$this->model->iodetail_weight;
-                    	$info['moto_date'] =time();
-                    	$info['moto_tarecode'] =$this->model->iodetail_code;
-                    	$info['moto_operator'] =$this->auth->nickname;
-                    	$info['company_id'] =$this->auth->company_id;
-                    	//1、先进库在查询该车牌号，如果找到，再进行比较大小，如果找不到则添加
-                    	$moto = new work\Motoinfo();
-                    	$motoinfo = $moto
-                    	    ->where(['moto_platenumber'=>$info['moto_platenumber'],'company_id'=>$info['company_id']])
-                    	    ->find();
-                    	 //2、如果找到再比大小   
-                    	 if($motoinfo) {
-                    	 	if($motoinfo['moto_tare']>$info['moto_tare']) {
-                    	 		$resu=$moto
-                    	    ->where(['moto_platenumber'=>$info['moto_platenumber'],'company_id'=>$info['company_id']])
-                    	    ->update($info);
-                    	 	}else{
-                    	 		
-                    	 	}
-                    	 
-                    	 }else {//如查找不到则直接添加
-                    	   $resu = $moto->allowField(true)->save($info);
-                    	 }
-                    
-                    	
-                       
-                  
-                    }
+                    $iodetail['type']=0;
                     Db::commit();	
                     $this->success(null,null,$iodetail); //返回进场单号给
                 } catch (ValidateException $e) {
@@ -196,6 +166,56 @@ class Indetail extends Backend
             $params = $this->request->post("row/a");
             if ($params) {
                 $params = $this->preExcludeFields($params);
+                if ($params['iodetail_paymentmode']=='储值卡') {
+                $custom = new custom\Custom();//
+                //先进行储值卡核验，不够支付时，退出
+                $customresult = $custom
+                	->where(['custom_id'=>$params['iodetail_custom_id'],'custom_password'=>$params['iodetail_password']])
+                	->find();
+                if(!$customresult) {
+                	$this->error('支付密码错误！',null,null); //返回进场单号给
+                }
+                //先进行储值卡核验，不够支付时，退出
+                $customresult = $custom
+                	->where(['custom_id'=>$params['iodetail_custom_id'],'custom_account'=>['EGT',$params['iodetail_cost']]])
+                	->find();
+                if(!$customresult) {
+                	$this->error('余额不足',null,null); //返回进场单号给
+                }
+                }
+                //生成单号
+                $main = $this->model
+                ->where('iodetail_iotime','between time',[date('Y-m-d 00:00:01'),date('Y-m-d 23:59:59')])
+                ->where('company_id',$this->auth->company_id)
+                ->where('iodetail_iotype',1)
+            	 -> order('iodetail_code','desc')->limit(1)->select();
+        	       if (count($main)>0) {
+        	       $item = $main[0];
+        	  	    $code = '0000'.(substr($item['iodetail_code'],9,4)+1);
+        	  	    $code = substr($code,strlen($code)-4,4);
+        	      	$params['iodetail_code'] = 'J'.date('Ymd').$code;
+        	      	} else {
+        	  	   	$params['iodetail_code']='J'.date('Ymd').'0001';
+        	      	}
+                
+                $params['iodetail_iotype'] = 1;//出入类型为入
+                $params['iodetail_status'] = 1;//初始为在场状态
+                $params['iodetail_iotime'] = time();//进场时间
+                $params['iodetail_operator'] = $this->auth->nickname;//添加操作员信息
+                $params['iodetail_weight'] = $params['iodetail_GW'];
+                $custom = new custom\Custom();
+                $custom_info = $custom
+                ->where(['custom_id'=>$params['iodetail_custom_id'],'custom_status'=>0,'company_id'=>$this->auth->company_id])//商户状态为正常
+                ->find();
+                $customtype = new custom\Customtype();
+                $customtype_info = $customtype
+                ->where(['customtype'=>$custom_info['custom_customtype'],'company_id'=>$this->auth->company_id])
+                ->find();
+                if($customtype_info['customtype_attribute']==1) {
+                  $params['iodetail_product_id'] = '';//如果是采购方进场，则无需货品信息
+                  //如查是采购方，可视为空车，将空车车皮重写入库中
+                  
+                }
 
                 if ($this->dataLimit && $this->dataLimitFieldAutoFill) {
                     $params[$this->dataLimitField] = $this->auth->company_id;
@@ -209,8 +229,91 @@ class Indetail extends Backend
                         $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.add' : $name) : $this->modelValidate;
                         $this->model->validateFailException(true)->validate($validate);
                     }
-                    $result = $this->model->allowField(true)->save($params);
-                    Db::commit();
+                    $result = $this->model->allowField(true)->save($params);              
+                    $staparams['statement_indetail_id'] =$this->model->iodetail_ID;//进场单ID
+                    //开始保存结算单
+                    //1、先确定结算单单号
+                    $sta = new work\Statement();
+                   
+                    $sta_info = $sta
+                      ->where('statement_date','between time',[date('Y-m-d 00:00:01'),date('Y-m-d 23:59:59')])
+             		    ->where(['company_id'=>$this->auth->company_id]) 
+            			 ->order('statement_code','desc')->limit(1)->select();
+ 
+        	     		  if (count($sta_info)>0) {
+        	       	  $item = $sta_info[0];
+        	       	   
+        	  	    	  $code = '0000'.(substr($item['statement_code'],9,4)+1);
+        	  	   	  $code = substr($code,strlen($code)-4,4);
+        	      	  $staparams['statement_code'] = 'S'.date('Ymd').$code;
+        	      	    } else {
+        	  	   	  $staparams['statement_code']='S'.date('Ymd').'0001';
+        	  	   	
+        	      	  }//完成单号确定
+        	      	  
+        	      	  //2、填充各字段的值
+                    $staparams['statement_date'] = time();
+                    $staparams['statement_plate_number'] = $params['iodetail_plate_number'];
+                    $staparams['statement_mototype'] = $params['iodetail_mototype'];
+                    $staparams['statement_product_id'] = $params['iodetail_product_id'];
+                    $staparams['statement_custom_id'] = $params['iodetail_custom_id'];
+                    $staparams['statement_customtype'] = $params['iodetail_custom_customtype'];
+                    $staparams['statement_GW'] = $params['iodetail_GW'];//毛重
+                    $staparams['statement_tare'] = $params['iodetail_tare'];//皮重
+                    $staparams['statement_NW'] = $params['iodetail_NW'];//净重
+                    $staparams['statement_product_price'] = $params['iodetail_price'];//单价
+                    $staparams['statement_discount'] = 100;//折扣
+                    $staparams['statement_cost'] = $params['iodetail_cost'];//金额
+                    $staparams['statement_intime'] = time();;//进场时间
+                    //$staparams['statement_outtime'] = $params['iodetail_iotime'];//离场时间 
+                    $staparams['statement_remark'] = $params['iodetail_remark'];//备注 
+                    $staparams['statement_checker']= $params['iodetail_checker'];//检查人
+                    $staparams['statement_status'] = 1;//未清算
+                    $staparams['company_id'] = $this->auth->company_id;//数据归属
+                    $staparams['statement_operator'] = $this->auth->nickname;//出操作员即可当前操作
+                    $result1 = $sta->allowField(true)->save($staparams);
+                    $statement['statement_id'] =$sta->statement_id;//结算单ID
+                    $statement['type'] = 1;
+                    //以上完成结算单保存
+                    //生成单号
+                    $account = new financial\Account();
+              		  $main = $account
+                     ->where('account_date','between time',[date('Y-m-d 00:00:01'),date('Y-m-d 23:59:59')])
+                     ->where(['company_id'=>$this->auth->company_id])
+                     //->where('account_object','<>','客户充值')
+            	      -> order('account_code','desc')->limit(1)->select();
+        	           if (count($main)>0) {
+        	           $item = $main[0];
+        	  	        $code = '0000'.(substr($item['account_code'],9,4)+1);
+        	  	        $code = substr($code,strlen($code)-4,4);
+        	           $accparams['account_code'] = 'A'.date('Ymd').$code;
+        	          	} else {
+        	  	       	$accparams['account_code']='A'.date('Ymd').'0001';
+        	         	}
+        	      
+        	           $accparams['account_date'] =time();	
+                    $accparams['account_operator'] = $this->auth->nickname;//经手人信息为当前操作员 
+                    $accparams['account_object'] = '入场费';
+                    $accparams['account_type'] = 0;//收入
+                    $accparams['account_custom_id'] = $params['iodetail_custom_id'];
+                    $accparams['account_amount'] = $params['iodetail_cost'];
+                    $accparams['account_cost'] = $params['iodetail_cost'];
+                    $accparams['account_paymentmode'] = $params['iodetail_paymentmode'];
+                    $accparams['account_operator'] = $this->auth->nickname;
+                    $accparams['account_statement_code'] = $staparams['statement_code'];
+                    $accparams['account_remark'] = $params['iodetail_remark'];
+                    $accparams['company_id'] = $this->auth->company_id;
+                    $result = $account->allowField(true)->save($accparams);
+                    if ($params['iodetail_paymentmode']=='储值卡') {
+                    //加入扣卡代码
+                    $newaccount = $customresult['custom_account']-$params['iodetail_cost'];
+                    $custom_acc = $custom
+                    		->where(['custom_id'=>$params['iodetail_custom_id']])
+                    		->update(['custom_account'=>$newaccount]);
+                    }
+                    
+                    Db::commit();	
+                    $this->success(null,null,$statement); //返回进场单号给
                 } catch (ValidateException $e) {
                     Db::rollback();
                     $this->error($e->getMessage());

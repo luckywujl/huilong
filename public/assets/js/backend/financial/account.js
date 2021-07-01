@@ -32,6 +32,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
                         {field: 'account_object', title: __('Account_object'), operate: 'LIKE'},
                         //{field: 'account_custom_id', title: __('Account_custom_id')},
                         {field: 'account_amount', title: __('Account_amount'), operate:'BETWEEN'},
+                        {field: 'account_cost', title: __('Account_cost')},
                         {field: 'account_paymentmode', title: __('Account_paymentmode'), operate: 'LIKE'},
                         {field: 'account_operator', title: __('Account_operator'), operate: 'LIKE'},
                         {field: 'account_statement_code', title: __('Account_statement_code'), operate: 'LIKE'},

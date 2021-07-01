@@ -55,15 +55,16 @@ class Recharge extends Backend
                 //生成单号
                 $main = $this->model
                 ->where('account_date','between time',[date('Y-m-d 00:00:01'),date('Y-m-d 23:59:59')])
-                ->where(['company_id'=>$this->auth->company_id,'account_object'=>'客户充值'])
+               // ->where(['company_id'=>$this->auth->company_id,'account_object'=>'客户充值'])
+                ->where(['company_id'=>$this->auth->company_id])
             	 -> order('account_code','desc')->limit(1)->select();
         	       if (count($main)>0) {
         	       $item = $main[0];
         	  	    $code = '0000'.(substr($item['account_code'],9,4)+1);
         	  	    $code = substr($code,strlen($code)-4,4);
-        	      	$params['account_code'] = 'R'.date('Ymd').$code;
+        	      	$params['account_code'] = 'A'.date('Ymd').$code;
         	      	} else {
-        	  	   	$params['account_code']='R'.date('Ymd').'0001';
+        	  	   	$params['account_code']='A'.date('Ymd').'0001';
         	      	}
         	      
         	      $params['account_date'] =time();
@@ -94,7 +95,7 @@ class Recharge extends Backend
                     $result = $this->model->allowField(true)->save($params);
                     
                     Db::commit();
-                    $account['account_id'] =$this->model->account_id;//出场单ID		
+                    $account['account_id'] =$this->model->account_id;//收支ID		
                     $this->success(null,null,$account);
                 } catch (ValidateException $e) {
                     Db::rollback();

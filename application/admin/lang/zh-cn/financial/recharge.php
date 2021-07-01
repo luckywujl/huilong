@@ -10,6 +10,7 @@ return [
     'Account_object'                   => '收支事由',
     'Account_custom_id'                => '客户名称',
     'Account_amount'                   => '充值金额',
+    'Account_cost'                   => '实付金额',
     'Account_paymentmode'              => '支付方式',
     'Account_operator'                 => '经手人',
     'Account_statement_code'           => '结算单号',

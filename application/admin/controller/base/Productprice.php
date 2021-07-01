@@ -23,7 +23,7 @@ class Productprice extends Backend
     protected $searchFields = 'baseproduct.product_code,baseproduct.product_name';
     protected $dataLimit = 'personal';
     protected $dataLimitField = 'company_id';
-    protected $noNeedRight = ['index'];
+    protected $noNeedRight = ['index','getproductprice'];
 
     public function _initialize()
     {
@@ -61,7 +61,7 @@ class Productprice extends Backend
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
 
             $list = $this->model
-                    ->with(['baseproduct','baseproducttype','customtype'])
+                    ->with(['baseproduct','baseproducttype'])
                     ->where($where)
                     ->order($sort, $order)
                     ->paginate($limit);
@@ -126,5 +126,28 @@ class Productprice extends Backend
         }
         return $this->view->fetch();
     }
-
+    
+    /**
+     * 根据时段获取货品价格
+     */
+    public function getproductprice()
+    {
+      if (!empty($this->request->post("product_id"))){
+    	
+    	$product_id = $this->request->post("product_id");
+    	$custom_type = $this->request->post("custom_type");
+    	$productprice = $this->model
+        ->where(['productprice_product_id'=>$product_id,'productprice_customtype'=>$custom_type,'company_id'=>$this->auth->company_id])
+        
+        ->where(['productprice_begin_time'=>['ELT',date('H:m:s', time())]])
+        ->where(['productprice_end_time'=>['EGT',date('H:m:s', time())]])
+        ->find();   
+       if ($productprice){
+       	  //查找车型信息，获取车皮重      	   
+       		$this->success(date('H:m:s', time()),null,$productprice);
+       	}else {
+        	 $this->error('货品价格设置不完整，请核实',null,null);
+       	}   	 
+       }   
+    }
 }

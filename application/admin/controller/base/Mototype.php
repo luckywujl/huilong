@@ -21,7 +21,7 @@ class Mototype extends Backend
     protected $searchFields = 'mototype';
     protected $dataLimit = 'personal';
     protected $dataLimitField = 'company_id';
-    protected $noNeedRight = ['index'];
+    protected $noNeedRight = ['index','getmototypetare'];
 
     public function _initialize()
     {
@@ -64,6 +64,26 @@ class Mototype extends Backend
             return json($result);
         }
         return $this->view->fetch();
+    }
+    
+    /**
+     * 根据车型获取车型皮重
+     */
+    public function getmototypetare()
+    {
+      if (!empty($this->request->post("mototype"))){
+    	
+    	$mototype = $this->request->post("mototype");
+    	$mototypetare = $this->model
+        ->where(['mototype'=>$mototype,'company_id'=>$this->auth->company_id])
+        ->find();   
+       if ($mototypetare){
+       	  //查找车型信息，获取车皮重      	   
+       		$this->success(null,null,$mototypetare);
+       	}else {
+        	 $this->error('通道信息异常，请核实',null,null);
+       	}   	 
+       }   
     }
 
 }

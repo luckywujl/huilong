@@ -7,6 +7,7 @@ use think\Db;
 use app\admin\model\custom as custom;
 use app\admin\model\base as base;
 use app\admin\model\work as work;
+use app\admin\model\financial as financial;
 /**
  * 结算清单
  *
@@ -63,7 +64,7 @@ class Statement extends Backend
             $list = $this->model
                     ->with(['customcustom','baseproduct'])
                     ->where($where)
-                    ->where(['statement_status'=>0])  //未结算,入数据
+                    ->where(['statement_status'=>1])  //未结算,入数据
                     ->order($sort, $order)
                     ->paginate($limit);
 
@@ -100,7 +101,7 @@ class Statement extends Backend
     	  $statement_info['custom_name'] = $custom_info['custom_name'];
     	  $statement_info['custom_tel'] = $custom_info['custom_tel'];
     	  $statement_info['custom_customtype'] = $custom_info['custom_customtype'];
-    	  
+    	  $statement_info['custom_account'] = $custom_info['custom_account'];
     	  $statement_info['custom_businessarea'] = $custom_info['custom_businessarea'];
     	  $statement_info['intime'] = date('Y-m-d H:i:s', $statement_info['statement_intime']);
         $statement_info['outtime'] = date('Y-m-d H:i:s', $statement_info['statement_outtime']);
@@ -110,7 +111,12 @@ class Statement extends Backend
           ->where('iodetail_id',$statement_info['statement_indetail_id'])
           ->find();
         $statement_info['card_code'] = $iodetail_info['iodetail_card_code'];//卡号
-        
+        $account = new financial\Account();
+        $account_info = $account
+        	->where(['account_statement_code'=>$statement_info['statement_code'],'company_id'=>$this->auth->company_id])
+        	->find();
+        	$statement_info['paymentmode']=$account_info['account_paymentmode'];
+        	$statement_info['amount'] = $account_info['account_amount'];        
 
         $result = array("data" => $statement_info);
        

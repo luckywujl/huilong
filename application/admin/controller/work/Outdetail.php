@@ -191,11 +191,11 @@ class Outdetail extends Backend
                     	
                     	$staparams['company_id'] = $this->auth->company_id;//数据归属
                     	
-                    	$staparams['statement_outoperator'] = $this->auth->nickname;//出操作员即可当前操作
+                    	$staparams['statement_operator'] = $this->auth->nickname;//出操作员即可当前操作
                     	
                     	$indetail_info = $this->model->where('iodetail_ID',$params['iodetail_in_id'])->find();
                     
-                    	$staparams['statement_inoperator'] = $indetail_info['iodetail_operator'];//进操作员
+                    	$staparams['statement_operator'] = $indetail_info['iodetail_operator'];//进操作员
                     
                     	$result1 = $sta->allowField(true)->save($staparams);
                     		

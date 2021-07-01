@@ -107,7 +107,7 @@ class Card extends Backend
        } else {
        	$custom = new custom\Custom();
        	$custom_info = $custom
-       	->where(['custom_name'=>$card_info,'custom_status'=>0])//商户状态为正常
+       	->where(['custom_name|custom_code|custom_tel'=>$card_info,'custom_status'=>0])//商户状态为正常
        	->find();
          if($custom_info) {
        		$custom_info['card_code']=$card['card_code'];

@@ -1,32 +1,34 @@
 <?php
 
-namespace app\admin\controller\custom;
+namespace app\admin\controller\financial;
 
 use app\common\controller\Backend;
 use think\Db;
 
 /**
- * 客户信息
+ * 收支明细
  *
  * @icon fa fa-circle-o
  */
-class Custom extends Backend
+class Payment extends Backend
 {
     
     /**
-     * Custom模型对象
-     * @var \app\admin\model\custom\Custom
+     * Payment模型对象
+     * @var \app\admin\model\financial\Payment
      */
     protected $model = null;
-    protected $searchFields = 'custom_name,custom_code,custom_address,custom_IDentity';
+    protected $searchFields = '';
     protected $dataLimit = 'personal';
     protected $dataLimitField = 'company_id';
+    protected $noNeedRight = ['add'];
+
 
     public function _initialize()
     {
         parent::_initialize();
-        $this->model = new \app\admin\model\custom\Custom;
-        $this->view->assign("customStatusList", $this->model->getCustomStatusList());
+        $this->model = new \app\admin\model\financial\Payment;
+        $this->view->assign("accountTypeList", $this->model->getAccountTypeList());
     }
 
     public function import()
@@ -48,13 +50,23 @@ class Custom extends Backend
             $params = $this->request->post("row/a");
             if ($params) {
                 $params = $this->preExcludeFields($params);
-                //加入身份证检测，以防重复开户
-                $custom_info = $this->model
-                       ->where(['custom_IDentity'=>$params['custom_IDentity'],'company_id'=>$this->auth->company_id])
-                       ->find();
-                if($custom_info) {
-                  $this->error(__('该身份证号码已被'.$custom_info['custom_name'].'['.$custom_info['custom_code'].']开户，请不要重复开户,'));
-                }       
+                //生成单号
+                $main = $this->model
+                ->where('account_date','between time',[date('Y-m-d 00:00:01'),date('Y-m-d 23:59:59')])
+                ->where(['company_id'=>$this->auth->company_id])
+                //->where('account_object','<>','客户充值')
+            	 -> order('account_code','desc')->limit(1)->select();
+        	       if (count($main)>0) {
+        	       $item = $main[0];
+        	  	    $code = '0000'.(substr($item['account_code'],9,4)+1);
+        	  	    $code = substr($code,strlen($code)-4,4);
+        	      	$params['account_code'] = 'A'.date('Ymd').$code;
+        	      	} else {
+        	  	   	$params['account_code']='A'.date('Ymd').'0001';
+        	      	}
+        	      
+        	      $params['account_date'] =time();	
+               $params['account_operator'] = $this->auth->nickname;//经手人信息为当前操作员 
 
                 if ($this->dataLimit && $this->dataLimitFieldAutoFill) {
                     $params[$this->dataLimitField] = $this->auth->company_id;
@@ -88,8 +100,9 @@ class Custom extends Backend
             }
             $this->error(__('Parameter %s can not be empty', ''));
         }
+        $params = $this->request->param();//接收过滤条件
+        $this->view->assign("row", $params);
         return $this->view->fetch();
     }
-    
-    
+
 }

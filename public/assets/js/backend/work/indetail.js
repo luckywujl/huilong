@@ -73,10 +73,24 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing','selectpage
             });
             // 为表格绑定事件
             Table.api.bindevent(table);
-            //提交
+            
+            //获取信息
+				$(document).on("click",".btn-getinfo",function () {
+					getchannelinfo();
+ 		   	 
+				});
+            // 离场收费
 				$(document).on("click", ".btn-accept", function(){
 				    $("#add-form").attr("action","work/indetail/index").submit(); 
 				});
+				
+				
+				//进场收款
+				$(document).on("click",".btn-statement",function () {
+					$("#add-form").attr("action","work/indetail/add").submit(); 
+	         });
+
+				
 				//打印
 				
 				$(document).on("click", ".btn-print", function(index){
@@ -99,41 +113,51 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing','selectpage
 				});
 				
 				//选择车型 
-				//$('#c-iodetail_mototype').selectPage({
-					
-				//});
-				
-				//获取信息
-				$(document).on("click",".btn-getinfo",function () {
-					//通道信息为空则提示错误并退出
-					if ($("#c-iodetail_channel").val()=="") {
-					 Toastr.error("通道信息为空");
-					 exit;
-					}
-				 //获取车牌识别结果和称重结果
-  				 Fast.api.ajax({
-        			url:'base/channel/getinchannelinfo',        													     
-             	data:{channel_info:$("#c-iodetail_channel").val()} //再将收到的create_code用POST方式发给主表控制器的total
+				$("#c-iodetail_mototype").data("eSelect", function(){
+   			 //后续操作
+   			 Fast.api.ajax({
+        			url:'base/mototype/getmototypetare',        													     
+             	data:{mototype:$("#c-iodetail_mototype").val()} //再将收到的create_code用POST方式发给主表控制器的total
          	 }, 
          	 function (data,ret) { //success 用于接收主表控制器发过来的数据
-         	   $("#c-iodetail_plate_number").val(data.channel_plate_number);
-         	   $("#c-iodetail_weight").val(data.channel_weight);
-         	   $("#c-iodetail_tare").val(data.moto_tare);
-         	   $("#c-iodetail_mototype").val(data.moto_type);
-         	   //$("#c-iodetail_mototype").selectPageClear();
-         	   //$("#c-iodetail_mototype").val(data.moto_type);
-         	   $("#c-iodetail_mototype").selectPageRefresh();
+         	   $("#c-iodetail_tare").val(data.mototype_tare);
+         	   count();
          		console.info(data);     													      
                return false;    															
            	},function(data){
                //失败的回调 
-					
            		//return false;	
                }											  		 		  
  			   	);
- 		   	 
 				});
 				
+				//选择货品名称
+				$("#c-iodetail_product_id").data("eSelect", function(){
+   			 //后续操作
+   			 if ($("#c-iodetail_custom_customtype").val()=="") {
+   			   Toastr.error('请先选择客户');
+   			   exit;
+   			 }
+   			 
+   			 Fast.api.ajax({
+        			url:'base/productprice/getproductprice',        													     
+             	data:{product_id:$("#c-iodetail_product_id").val(),custom_type:$("#c-iodetail_custom_customtype").val()} //再将收到的create_code用POST方式发给主表控制器的total
+         	 }, 
+         	 function (data,ret) { //success 用于接收主表控制器发过来的数据
+         	   $("#c-iodetail_price").val(data.productprice_price);
+         	   count();
+         		console.info(data);     													      
+               //return false;    															
+           	},function(data){
+               //失败的回调 
+           		//return false;	
+               }											  		 		  
+ 			   	);
+   			 
+				});
+				
+				
+		
 				
 				
 				//输入卡号或内码，按回车键，到库里查找卡信息
@@ -141,22 +165,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing','selectpage
 				if (event.keyCode =='13')
 				{
 				//获取车牌识别结果和称重结果
-  				 Fast.api.ajax({
-        			url:'base/channel/getinchannelinfo',        													     
-             	data:{channel_info:$("#c-iodetail_channel").val()} //再将收到的create_code用POST方式发给主表控制器的total
-         	 }, 
-         	 function (data,ret) { //success 用于接收主表控制器发过来的数据
-         	  
-         	   $("#c-iodetail_plate_number").val(data.channel_plate_number);
-         	   $("#c-iodetail_weight").val(data.channel_weight);
-         		console.info(data);     													      
-               return false;    															
-           	},function(data){
-               //失败的回调 
-					
-           		//return false;	
-               }											  		 		  
- 			   	);
+  				 getchannelinfo();
  			   	//再更新客户信息
 				Fast.api.ajax({
         			url:'custom/card/getcardinfo',        													     
@@ -185,8 +194,60 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing','selectpage
 				}
 				});
 				
-				
+				$("#c-iodetail_plate_number").bind("keypress",function (event) {
+				if (event.keyCode =='13')
+				{
+					
+				}
+			  });
+			  
+			  $("#c-iodetail_tare").bind("keyup",function (event) {
+				count();
+			  });
+			  $("#c-iodetail_price").bind("keyup",function (event) {
+				count();
+			  });
+			  
+			  $("#c-iodetail_NW").bind("keyup",function (event) {
+				$("#c-iodetail_cost").val(($("#c-iodetail_NW").val()*$("#c-iodetail_price").val()).toFixed(0));
+			  });
+			  
 				Controller.api.bindevent();
+				
+				//获取通道信息
+				function getchannelinfo() {
+					//通道信息为空则提示错误并退出
+					if ($("#c-iodetail_channel").val()=="") {
+					 Toastr.error("通道信息为空");
+					 exit;
+					}
+				 //获取车牌识别结果和称重结果
+  				 Fast.api.ajax({
+        			url:'base/channel/getinchannelinfo',        													     
+             	data:{channel_info:$("#c-iodetail_channel").val()} //再将收到的create_code用POST方式发给主表控制器的total
+         	 }, 
+         	 function (data,ret) { //success 用于接收主表控制器发过来的数据
+         	   $("#c-iodetail_plate_number").val(data.channel_plate_number);
+         	   $("#c-iodetail_GW").val(data.channel_weight);
+         	   $("#c-iodetail_tare").val(data.moto_tare); 
+         	   $("#c-iodetail_mototype").val(data.moto_type);
+         	   $("#c-iodetail_mototype").selectPageClear();
+         	   $("#c-iodetail_mototype").val(data.moto_type);
+         	   $("#c-iodetail_mototype").selectPageRefresh();
+         	   count();
+         		console.info(data);     													      
+               return false;    															
+           	},function(data){	
+               }											  		 		  
+ 			   	);
+				}
+				
+				//计算净重及实际费用
+				function count() {
+					//计算净重
+					$("#c-iodetail_NW").val($("#c-iodetail_GW").val()-$("#c-iodetail_tare").val());
+					$("#c-iodetail_cost").val(($("#c-iodetail_NW").val()*$("#c-iodetail_price").val()).toFixed(0));
+				}
         },
         add: function () {
             Controller.api.bindevent();
@@ -281,7 +342,37 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing','selectpage
 					$("#c-iodetail_custom_customtype").val('');
 					$("#c-iodetail_weight").val('');
 					$("#c-iodetail_remark").val('');
+					$("#c-iodetail_mototype").val('');
+         	   $("#c-iodetail_mototype").selectPageClear();
+         	   $("#c-iodetail_tare").val('');
+         	   $("#c-iodetail_GW").val('');
+         	   $("#c-iodetail_cost").val('');
+         	   $("#c-iodetail_price").val('');
+         	   $("#c-iodetail_NW").val('');
+         	   $("#c-iodetail_product_id").val('');
+         	   $("#c-iodetail_product_id").selectPageClear();
+         	   $("#c-iodetail_password").val('');
+         	   
 					//$("#c-iodetail_product_id").val('');
+					//加入判断语句，打印不同的报表
+					if (data.type) {
+					//打印单据
+					$.ajax({
+                        url: "work/statement/print",
+                        type: 'post',
+                        dataType: 'json',
+                        data: {statement_id:data.statement_id},
+                        success: function (ret) {
+                            var options ={
+                                templateCode:'rhnp',
+                                data:ret.data,
+                            };
+                            Printing.api.printTemplate(options);
+                        }, error: function (e) {
+                            Backend.api.toastr.error(e.message);
+                        }
+                    });
+					}else {
 					//打印单据
 					$.ajax({
                         url: "work/indetail/print",
@@ -297,7 +388,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing','selectpage
                         }, error: function (e) {
                             Backend.api.toastr.error(e.message);
                         }
-                    });	
+                    });
+                }
                 //清空车牌信息
 					Fast.api.ajax({
         			url:'base/channel/clearplate',        													     

@@ -20,8 +20,8 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
                 '  @page { size: auto;   margin: '+marginLeft+'px 0 '+marginRight+'px 0; }' +
                 '</style>' +
                 '<style type="text/css" media="all">' +
-                'table{border-collapse: collapse; font-size: 12px; }\n' +
-                'table, th, td {border: 1px solid grey}\n' +
+                'table{border-collapse: collapse; font-size: 14px; }\n' +
+                'table, th, td {border: 1px solid black}\n' +
                 'th, td {text-align: center; vertical-align: middle;}\n' +
                 'p {margin-left:20px; }\n' +
                 'th {height:30px; }\n' +

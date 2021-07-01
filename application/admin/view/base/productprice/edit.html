@@ -15,9 +15,9 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="control-label col-xs-12 col-sm-2">{:__('Productprice_customtype_id')}:</label>
+        <label class="control-label col-xs-12 col-sm-2">{:__('Productprice_customtype')}:</label>
         <div class="col-xs-12 col-sm-8">
-            <input id="c-productprice_customtype_id" data-rule="required" data-source="custom/customtype/index" data-field="customtype" data-primary-key="customtype_ID" class="form-control selectpage" name="row[productprice_customtype_id]" type="text" value="{$row.productprice_customtype_id|htmlentities}">
+            <input id="c-productprice_customtype" data-rule="required" data-source="custom/customtype/index" data-field="customtype" data-primary-key="customtype" class="form-control selectpage" name="row[productprice_customtype]" type="text" value="{$row.productprice_customtype|htmlentities}">
         </div>
     </div>
     <div class="form-group">
@@ -29,13 +29,13 @@
     <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Productprice_begin_time')}:</label>
         <div class="col-xs-12 col-sm-8">
-            <input id="c-productprice_begin_time" class="form-control datetimepicker" data-date-format="HH:mm:ss" data-use-current="true" name="row[productprice_begin_time]" type="text" value="{:$row.productprice_begin_time?datetime($row.productprice_begin_time):''}">
+            <input id="c-productprice_begin_time" class="form-control datetimepicker" data-date-format="HH:mm:ss"  name="row[productprice_begin_time]" type="text" value="{$row.productprice_begin_time|htmlentities}">
         </div>
     </div>
     <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Productprice_end_time')}:</label>
         <div class="col-xs-12 col-sm-8">
-            <input id="c-productprice_end_time" class="form-control datetimepicker" data-date-format="HH:mm:ss" data-use-current="true" name="row[productprice_end_time]" type="text" value="{:$row.productprice_end_time?datetime($row.productprice_end_time):''}">
+            <input id="c-productprice_end_time" class="form-control datetimepicker" data-date-format="HH:mm:ss" name="row[productprice_end_time]" type="text" value="{$row.productprice_end_time|htmlentities}">
         </div>
     </div>
    

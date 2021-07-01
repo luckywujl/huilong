@@ -4,6 +4,7 @@ return [
     'Custom_id'           => '客户ID',
     'Custom_code'         => '客户编号',
     'Custom_name'         => '客户名称',
+    'Custom_password'     => '支付密码',
     'Custom_customtype'   => '客户类型',
     'Custom_businessarea' => '业务区',
     'Custom_address'      => '客户地址',

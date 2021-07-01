@@ -82,11 +82,11 @@ class Balance extends Api
     	Db::startTrans();
     	if($params['channel_weight']<=10) {
     	    $channel
-    			->where(['channel'=>$params['channel']])
-            ->update(['channel_weight'=>$params['channel_weight'],'channel_plate_number'=>'']);//将明细表状态更改为审核
+    			->where(['channel'=>['like','1号通道%']])
+            ->update(['channel_weight'=>$params['channel_weight'],'channel_plate_number'=>'_无_']);//将明细表状态更改为审核
          } else {
           $channel
-    			->where(['channel'=>$params['channel']])
+    			->where(['channel'=>['like','1号通道%']])
             ->update(['channel_weight'=>$params['channel_weight']]);
          }
             Db::commit();

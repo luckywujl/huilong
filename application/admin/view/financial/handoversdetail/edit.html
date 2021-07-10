@@ -1,0 +1,46 @@
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Handovers_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-handovers_id" data-rule="required" data-source="handovers/index" class="form-control selectpage" name="row[handovers_id]" type="text" value="{$row.handovers_id|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Handovers_detail_object')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-handovers_detail_object" class="form-control" name="row[handovers_detail_object]" type="text" value="{$row.handovers_detail_object|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Handovers_detail_paymentmode')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-handovers_detail_paymentmode" class="form-control" name="row[handovers_detail_paymentmode]" type="text" value="{$row.handovers_detail_paymentmode|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Handovers_detail_paycount')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-handovers_detail_paycount" class="form-control" name="row[handovers_detail_paycount]" type="number" value="{$row.handovers_detail_paycount|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Hanvovers_detail_payamount')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-hanvovers_detail_payamount" class="form-control" name="row[hanvovers_detail_payamount]" type="number" value="{$row.hanvovers_detail_payamount|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Company_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-company_id" data-rule="required" data-source="company/index" class="form-control selectpage" name="row[company_id]" type="text" value="{$row.company_id|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+</form>

@@ -360,12 +360,12 @@ class Payment extends Backend
                //添加押金尾部合计
                $row = [];
                $row['account_object'] ='押金合计：';
+               $row['account_count'] = $handovers_total_count;
+               $row['account_cost'] = $handovers_total_cost; 
                
                foreach ($handovers_paymentmode as $j => $u) {
                	$count =0;
                   $cost = 0; 
-                  $total_count = 0;
-                  $total_cost = 0;
                	foreach($handovers_list as $k =>$v){  
                		if(stripos($v['account_object'], '押金合计')!==false) {           
                			$x =$u['account_paymentmode'].'-count';
@@ -374,8 +374,6 @@ class Payment extends Backend
                			$count = $count +$v[$x];
                			$cost = $cost + $v[$z];
                			}
-               			$total_count = $total_count+$v['account_count'];
-                        $total_cost = $total_cost+$v['account_cost'];
                		}
                	$x =$u['account_paymentmode'].'-count';
                   $row[$x] = $count;
@@ -383,8 +381,6 @@ class Payment extends Backend
                   $row[$z] = round($cost,2);
                	}   
                 }
-               $row['account_count'] = $total_count;
-               $row['account_cost'] = $total_cost; 
                $handovers_list[] =$row;
                 
             

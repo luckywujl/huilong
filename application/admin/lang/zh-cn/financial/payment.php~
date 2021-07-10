@@ -22,7 +22,6 @@ return [
     'Handovers_endtime'   					=> '截止时间',
     'Handovers_count'     					=> '交易笔数',
     'Handovers_amount'    					=> '交易金额',
-    'Handovers_successor'					=> '接班人',
     'Customcustom.custom_id'           => '客户ID',
     'Customcustom.custom_code'         => '客户编号',
     'Customcustom.custom_name'         => '客户名称',

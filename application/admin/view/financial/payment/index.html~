@@ -30,7 +30,7 @@
      	<div class="form-group">
      	  <label class="control-label col-xs-12 col-sm-1">{:__('Handovers_successor')}:</label>
         <div class="col-xs-12 col-sm-2">
-            <input id="c-handovers_successor" data-source="auth/admin/index" data-field="nickname" data-primary-key="nickname" class="form-control selectpage" name="row[handovers_successor]" type="text">
+            <input id="c-handovers_successor_id" data-source="auth/admin/index" data-field="nickname" data-primary-key="nickname" class="form-control selectpage" name="row[handovers_successor]" type="text">
         </div>
         <div class="col-xs-12 col-sm-4">
             <button type="button" class="btn btn-success btn-embossed btn-accept">{:__('OK')}</button>

@@ -67,7 +67,7 @@
         
         <label class="control-label col-xs-12 col-sm-1">{:__('Iodetail_checker')}:</label>
         <div class="col-xs-12 col-sm-1">
-            <input id="c-iodetail_checker"  data-source="auth/admin/index" data-field="nickname" data-primary-key="nickname" class="form-control selectpage" name="row[iodetail_checker]" type="text">
+            <input id="c-iodetail_checker"  data-source="auth/admin/index" data-field=nickname data-primary-key="nickname" class="form-control selectpage" name="row[iodetail_checker]" type="text">
         </div>
         
         

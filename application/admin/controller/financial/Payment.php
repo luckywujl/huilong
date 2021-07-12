@@ -31,7 +31,7 @@ class Payment extends Backend
     public function _initialize()
     {
         parent::_initialize();
-        $this->model = new \app\admin\model\financial\Payment;
+        $this->model = new \app\admin\model\financial\Payment; 
         $this->view->assign("accountTypeList", $this->model->getAccountTypeList());
     }
 
@@ -155,18 +155,10 @@ class Payment extends Backend
                 ->select(); 
             }
             
-            //2、获取所有的支付项目（包括接上班，本班）
+            
             
        		 
-            //2、再计算所有的汇总总量，用于排在表格的右下角
-        		 $handovers_total_cost = $this->model
-                ->where($where)  
-                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])             
-                ->sum('account_cost'); 
-    		    $handovers_total_count = $this->model
-                ->where($where)  
-                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])             
-                ->count();
+           
                 
         if ($this->request->isAjax()) {
             //如果发送的来源是Selectpage，则转发到Selectpage
@@ -174,11 +166,12 @@ class Payment extends Backend
                 return $this->selectpage();
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
-            $handovers_list=[];  
+            $handovers_list=[]; 
+            //2、获取上班交班数据（营收和押金） 
             if($handovers_last) {//如果有接上班数据则
               	  if($handovers_last['handovers_type']==0) {
              		$handovers_last_object =$handoversdetail
-             			->field('handovers_detail_object as account_object,count(*) as account_count,sum(handovers_detail_payamount) as account_cost')   
+             			->field('handovers_detail_object as account_object')   
                 		->where($where)
                 		->where(['handovers_id'=>$handovers_last['handovers_id'],'handovers_detail_object'=>['in','押金合计,营收合计']])
                 		->group('account_object')
@@ -186,7 +179,7 @@ class Payment extends Backend
                 		->select();
           		 } else {
           			$handovers_last_object =$handoversdetail
-             			->field('handovers_detail_object as account_object,count(*) as account_count,sum(handovers_detail_payamount) as account_cost')   
+             			->field('handovers_detail_object as account_object')   
                 		->where($where)
                 		->where(['handovers_id'=>$handovers_last['handovers_id'],'handovers_detail_object'=>'押金合计'])
                 		->group('account_object')
@@ -198,8 +191,8 @@ class Payment extends Backend
               foreach ($handovers_last_object as $k => $v) {
                $row = [];
                $row['account_object'] = $v['account_object'].'(接上班)';//支付名称
-               $row['account_count'] = $v['account_count'];//总笔数
-               $row['account_cost'] = round($v['account_cost'],2);//总额
+               //$row['account_count'] = $v['account_count'];//总笔数
+               //$row['account_cost'] = round($v['account_cost'],2);//总额
             	//获取每个节点的数据，即每种支付项目各种支付方式的汇总笔数和金额
                $handovers_last_object_paymentmode_total = $handoversdetail
                 ->field('handovers_detail_object as account_object,handovers_detail_paymentmode as account_paymentmode,count(*) as account_count,sum(handovers_detail_payamount) as account_cost')   
@@ -218,10 +211,8 @@ class Payment extends Backend
                }
               $handovers_list[] =$row;  	
                } 
-       		} else{
-       			
-       		}	
-            //计算有多少种收支项目，并求出不区分支付的该方式的该项目总数及总额，用于排在表格的最右一列
+       		} 
+            //3、计算本班有多少种收支项目，并求出不区分支付的该方式的该项目总数及总额，用于排在表格的最右一列
             $account_object = $this->model
                 ->field('account_object as account_object,count(*) as account_count,sum(account_cost) as account_cost')   
                 ->where($where)
@@ -235,8 +226,8 @@ class Payment extends Backend
             foreach ($account_object as $k => $v) {
                $row = [];
                $row['account_object'] = $v['account_object'].'(本班)';//支付名称
-               $row['account_count'] = $v['account_count'];//总笔数
-               $row['account_cost'] = round($v['account_cost'],2);//总额
+               $row['合计-count'] = $v['account_count'];//总笔数
+               $row['合计-cost'] = round($v['account_cost'],2);//总额
             	//获取每个节点的数据，即每种支付项目各种支付方式的汇总笔数和金额
                $account_object_paymentmode_total = $this->model
                 ->field('account_object,account_paymentmode,count(*) as account_count,sum(account_cost) as account_cost')   
@@ -256,7 +247,7 @@ class Payment extends Backend
               $handovers_list[] =$row;  	
                }  
                
-               //本班非押金合计 
+               //4、计算本班营收合计 
             $handovers_object_a = $this->model
                 ->field('count(*) as account_count,sum(account_cost) as account_cost')   
                 ->where($where)
@@ -271,8 +262,8 @@ class Payment extends Backend
             foreach ($handovers_object_a as $k => $v) {
                $row = [];
                $row['account_object'] ='营收合计(本班）：';
-               $row['account_count'] = $v['account_count'];//总笔数
-               $row['account_cost'] = round($v['account_cost'],2);//总额
+               $row['合计-count'] = $v['account_count'];//总笔数
+               $row['合计-cost'] = round($v['account_cost'],2);//总额
             	//获取每个节点的数据，即每种支付项目各种支付方式的汇总笔数和金额
                $account_object_paymentmode_total = $this->model
                 ->field('account_paymentmode,count(*) as account_count,sum(account_cost) as account_cost')   
@@ -292,7 +283,7 @@ class Payment extends Backend
               $handovers_list[] =$row;  	
                }  
                
-               //本班押金合计 
+               //5、计算本班押金合计 
             $handovers_object_a = $this->model
                 ->field('count(*) as account_count,sum(account_cost) as account_cost')   
                 ->where($where)
@@ -307,8 +298,8 @@ class Payment extends Backend
             foreach ($handovers_object_a as $k => $v) {
                $row = [];
                $row['account_object'] ='押金合计(本班）：';
-               $row['account_count'] = $v['account_count'];//总笔数
-               $row['account_cost'] = round($v['account_cost'],2);//总额
+               $row['合计-count'] = $v['account_count'];//总笔数
+               $row['合计-cost'] = round($v['account_cost'],2);//总额
             	//获取每个节点的数据，即每种支付项目各种支付方式的汇总笔数和金额
                $account_object_paymentmode_total = $this->model
                 ->field('account_paymentmode,count(*) as account_count,sum(account_cost) as account_cost')   
@@ -328,7 +319,7 @@ class Payment extends Backend
               $handovers_list[] =$row;  	
                }  
                
-               //添加尾部合计
+               //6、添加尾部营收合计
                $row = [];
                $row['account_object'] ='营收合计：';
                foreach ($handovers_paymentmode as $j => $u) {
@@ -344,8 +335,8 @@ class Payment extends Backend
                			$count = $count +$v[$x];
                			$cost = $cost + $v[$z];
                			}
-               			$total_count = $total_count+$v['account_count'];
-                        $total_cost = $total_cost+$v['account_cost'];
+               			$total_count = $total_count+$v['合计-count'];
+                        $total_cost = $total_cost+$v['合计-cost'];
                		}
                	$x =$u['account_paymentmode'].'-count';
                   $row[$x] = $count;
@@ -353,11 +344,11 @@ class Payment extends Backend
                   $row[$z] = round($cost,2);
                	}   
                 }
-               $row['account_count'] = $total_count;
-               $row['account_cost'] = $total_cost; 
+               $row['合计-count'] = $total_count;
+               $row['合计-cost'] = round($total_cost,2); 
                $handovers_list[] =$row;
                
-               //添加押金尾部合计
+               //7、添加押金尾部合计
                $row = [];
                $row['account_object'] ='押金合计：';
                
@@ -374,8 +365,8 @@ class Payment extends Backend
                			$count = $count +$v[$x];
                			$cost = $cost + $v[$z];
                			}
-               			$total_count = $total_count+$v['account_count'];
-                        $total_cost = $total_cost+$v['account_cost'];
+               			$total_count = $total_count+$v['合计-count'];
+                        $total_cost = $total_cost+$v['合计-cost'];
                		}
                	$x =$u['account_paymentmode'].'-count';
                   $row[$x] = $count;
@@ -383,8 +374,8 @@ class Payment extends Backend
                   $row[$z] = round($cost,2);
                	}   
                 }
-               $row['account_count'] = $total_count;
-               $row['account_cost'] = $total_cost; 
+               $row['合计-count'] = $total_count;
+               $row['合计-cost'] = round($total_cost,2); 
                $handovers_list[] =$row;
                 
             
@@ -409,25 +400,16 @@ class Payment extends Backend
         	list($where, $sort, $order, $offset, $limit) = $this->buildparams();
          	$params = $this->request->post("row/a");
         	   $handovers = new financial\Handovers();//定义数据模型
-        	   $handoversdetail = new financial\Handoversdetail();//定义数据模型
-        	   $admin = new model\Admin();
-        	    //2、再计算所有的汇总总量，用于排在表格的右下角
-        		$handovers_total_cost = $this->model
-                ->where($where)  
-                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])             
-                ->sum('account_cost'); 
-    		   $handovers_total_count = $this->model
-                ->where($where)  
-                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])             
-                ->count();
-             
+        		$handoversdetail = new financial\Handoversdetail();//定义数据模型
+        		$paymentmode = new base\Paymentmode();//支付方式
+        	   $admin = new model\Admin(); 
             $admin_info = $admin
              	->where($where)
              	->where(['nickname'=>$params['handovers_successor'],'company_id'=>$this->auth->company_id])
              	->find();
             $params['handovers_successor_id'] = $admin_info['id'];
-            $params['handovers_count'] =  $handovers_total_count;
-            $params['handovers_amount'] = $handovers_total_cost;
+            //$params['handovers_count'] =  $handovers_total_count;
+            //$params['handovers_amount'] = $handovers_total_cost;
             $params['handovers_operator_id'] = $this->auth->id;//交班人ID
             if ($params) {
                 $params = $this->preExcludeFields($params);
@@ -446,27 +428,289 @@ class Payment extends Backend
                     }
                     $result = $handovers->allowField(true)->save($params);//交接记录主表添加
                     $handovers_id = $handovers->handovers_id;//交接单主表ID
-                    //获取每个节点的数据，即每种支付项目各种支付方式的汇总笔数和金额
-              		  $handovers_object_paymentmode_total = $this->model
-            		    ->field('account_object,account_paymentmode,count(*) as account_count,sum(account_cost) as account_cost')   
-           			    ->where($where)
-                		 ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])
-               		 //->where('account_object',$v['account_object'])
-               		 ->group('account_object,account_paymentmode')
-               		 ->order($sort, $order) 
-                		 ->paginate($limit);
-               	 $item =[];
-              		 foreach ($handovers_object_paymentmode_total as $j => $u) {
-              		 	 $row = [];
-              		 	 $row['handovers_id'] = $handovers_id;
-              		 	 $row['handovers_detail_object'] = $u['account_object'];
-              		 	 $row['handovers_detail_paymentmode'] = $u['account_paymentmode'];
-              		 	 $row['handovers_detail_paycount'] =$u['account_count'];
-              		 	 $row['handovers_detail_payamount'] = $u['account_cost'];
-              		 	 $row['company_id'] = $this->auth->company_id;         
-              		 	 $item[] = $row; 
-               		}
-                    $result1 = $handoversdetail->saveall($item);//交接记录主表添加
+                    //加入交班明细的数据处理流程
+            $handovers_detail = [];
+            //0、先查一下有没有需要接上一班的数据
+        	    $handovers_last = $handovers
+        	    	->where(['handovers_successor'=>$this->auth->nickname,'handovers_status'=>0,'company_id'=>$this->auth->company_id])
+        	    	->find();
+
+            //1、先获取总共有几种支付方式,包含接上班的以及各种支付方式汇总笔数和金额，用于排在表格最下面一行
+            
+            if($handovers_last) {//如果有接上班数据则
+              if($handovers_last['handovers_type']==0) {
+              	$handovers_last_detail = $handoversdetail  //如果是全交下班的方式，则查找上班交班时的所有支付方式
+              		->field('handovers_detail_paymentmode as paymentmode')
+              		->where(['handovers_id'=>$handovers_last['handovers_id']])
+              		->group('paymentmode')
+              		->order('paymentmode asc')
+              		->select();
+              } else {
+              $handovers_last_detail = $handoversdetail   //如果是交财务的方式，则查找上班交班时的押金支付方式
+              		->field('handovers_detail_paymentmode as paymentmode')
+              		->where(['handovers_id'=>$handovers_last['handovers_id'],'handovers_detail_object'=>['like','%押%']])
+              		->group('paymentmode')
+              		->order('paymentmode asc')
+              		->select(); 	
+              }
+              
+              $account_detail = $this->model  //本班交易明细中的支付方式
+                ->field('account_paymentmode as paymentmode')   
+                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])
+                ->group('account_paymentmode')
+                ->order('account_paymentmode asc') 
+                ->select(); 
+                
+              $handovers_paymentmode = $paymentmode  //到支付方式基础表中查询上班的支付方式和本班的支付方式合集
+               	->field('paymentmode as account_paymentmode')
+               	->where(array('paymentmode'=>array('in',array_column($handovers_last_detail,'paymentmode'))))
+               	->whereOr(array('paymentmode'=>array('in',array_column($account_detail,'paymentmode'))))
+               	->select(); 
+            	
+            } else {                             //如果无接班数据，则仅统计本班的支付方式
+            	$handovers_paymentmode = $this->model
+                ->field('account_paymentmode,count(*) as account_count,sum(account_cost) as account_cost')   
+                //->where('account_date','between',[strtotime(mb_substr($params['statement_date'],0,19)),strtotime(mb_substr($params['statement_date'],22,19))])
+                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])
+                ->group('account_paymentmode')
+                ->order('account_paymentmode asc') 
+                ->select(); 
+            }
+            //2、获取上班交班数据（营收和押金） 
+            if($handovers_last) {//如果有接上班数据则
+              	  if($handovers_last['handovers_type']==0) {
+             		$handovers_last_object =$handoversdetail
+             			->field('handovers_detail_object,handovers_detail_paymentmode,handovers_detail_paycount,handovers_detail_payamount')   
+                		->where($where)
+                		->where(['handovers_id'=>$handovers_last['handovers_id'],'handovers_detail_object'=>['in','押金合计,营收合计']])
+                		//->group('handovers_detail_object,handovers_detail_paymentmode')
+                		->order('handovers_detail_object desc') 
+                		->select();
+          		 } else {
+          			$handovers_last_object =$handoversdetail
+             			->field('handovers_detail_object,handovers_detail_paymentmode,handovers_detail_paycount,handovers_detail_payamount')   
+                		->where($where)
+                		->where(['handovers_id'=>$handovers_last['handovers_id'],'handovers_detail_object'=>'押金合计'])
+                		//->group('handovers_detail_object,handovers_detail_paymentmode')
+                		->order('handovers_detail_object asc') 
+                		->select();
+          		}
+          
+            	//转存数据
+              foreach ($handovers_last_object as $k => $v) {
+               $row = [];
+               $row['handovers_id'] = $handovers_id;
+               $row['handovers_detail_object'] = $v['handovers_detail_object'].'(接上班)';
+               $row['handovers_detail_paymentmode'] = $v['handovers_detail_paymentmode'];
+               $row['handovers_detail_paycount'] = $v['handovers_detail_paycount'];
+               $row['handovers_detail_payamount'] = round($v['handovers_detail_payamount'],2);
+               $row['company_id'] = $this->auth->company_id;  
+               $handovers_detail[] =$row;        
+               }
+       		} 
+       		//3、计算本班有多少种收支项目，并求出不区分支付的该方式的该项目总数及总额，用于排在表格的最右一列
+            $account_object = $this->model
+                ->field('account_object as handovers_detail_object,count(*) as handovers_detail_paycount,sum(account_cost) as handovers_detail_payamount')   
+                ->where($where)
+                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])
+                ->group('account_object')
+                ->order('account_object asc') 
+                ->paginate($limit);  
+             
+            
+            //组装行数据-即每种支付的名称，总笔数和总额
+            foreach ($account_object as $k => $v) {
+               $row = [];
+               $row['handovers_id'] = $handovers_id;
+               $row['handovers_detail_object'] = $v['handovers_detail_object'].'(本班)';
+               $row['handovers_detail_paymentmode'] = '合计';
+               $row['handovers_detail_paycount'] = $v['handovers_detail_paycount'];
+               $row['handovers_detail_payamount'] = round($v['handovers_detail_payamount'],2);
+               $row['company_id'] = $this->auth->company_id; 
+               $handovers_detail[] =$row; 
+            	//获取每个节点的数据，即每种支付项目各种支付方式的汇总笔数和金额
+               $account_object_paymentmode_total = $this->model
+                ->field('account_object as handovers_detail_object,account_paymentmode as handovers_detail_paymentmode,count(*) as handovers_detail_paycount,sum(account_cost) as handovers_detail_payamount')   
+                ->where($where)
+                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])
+                ->where('account_object',$v['handovers_detail_object'])
+                ->group('account_object,account_paymentmode')
+                ->order($sort, $order) 
+                ->paginate($limit);
+               
+               foreach ($account_object_paymentmode_total as $j => $u) {
+                 	$row = [];
+               	$row['handovers_id'] = $handovers_id;
+               	$row['handovers_detail_object'] = $u['handovers_detail_object'].'(本班)';
+               	$row['handovers_detail_paymentmode'] = $u['handovers_detail_paymentmode'];
+               	$row['handovers_detail_paycount'] = $u['handovers_detail_paycount'];
+               	$row['handovers_detail_payamount'] = round($u['handovers_detail_payamount'],2);
+               	$row['company_id'] = $this->auth->company_id; 
+               	$handovers_detail[] =$row;           
+               }
+               }  
+               //4、计算本班营收合计 
+              $handovers_object_a = $this->model
+                ->field('count(*) as handovers_detail_paycount,sum(account_cost) as handovers_detail_payamount')   
+                ->where($where)
+                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])
+                ->where('account_object','notlike','%押%')
+                ->paginate($limit);  
+             
+            
+            //组装行数据-即每种支付的名称，总笔数和总额
+            foreach ($handovers_object_a as $k => $v) {
+               $row = [];
+               $row['handovers_id'] = $handovers_id;
+               $row['handovers_detail_object'] = '营收合计(本班)';
+               $row['handovers_detail_paymentmode'] = '合计';
+               $row['handovers_detail_paycount'] = $v['handovers_detail_paycount'];
+               $row['handovers_detail_payamount'] = round($v['handovers_detail_payamount'],2);
+               $row['company_id'] = $this->auth->company_id; 
+               $handovers_detail[] =$row; 
+            	//获取每个节点的数据，即每种支付项目各种支付方式的汇总笔数和金额
+               $account_object_paymentmode_total = $this->model
+                ->field('account_paymentmode as handovers_detail_paymentmode,count(*) as handovers_detail_paycount,sum(account_cost) as handovers_detail_payamount')   
+                ->where($where)
+               ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])
+                ->where('account_object','notlike','%押%')
+                ->group('account_paymentmode')
+                ->order($sort, $order) 
+                ->paginate($limit);
+               
+               foreach ($account_object_paymentmode_total as $j => $u) {
+                 $row = [];
+               $row['handovers_id'] = $handovers_id;
+               $row['handovers_detail_object'] = '营收合计(本班)';
+               $row['handovers_detail_paymentmode'] = $u['handovers_detail_paymentmode'];
+               $row['handovers_detail_paycount'] = $u['handovers_detail_paycount'];
+               $row['handovers_detail_payamount'] = round($u['handovers_detail_payamount'],2);
+               $row['company_id'] = $this->auth->company_id; 
+               $handovers_detail[] =$row;              
+               }
+            
+               }  
+               
+               //5、计算本班押金合计 
+            $handovers_object_a = $this->model
+                ->field('count(*) as handovers_detail_paycount,sum(account_cost) as handovers_detail_payamount')   
+                ->where($where)
+                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])
+                ->where('account_object','like','%押%')
+                ->paginate($limit);  
+             
+            
+            //组装行数据-即每种支付的名称，总笔数和总额
+            foreach ($handovers_object_a as $k => $v) {
+               $row = [];
+               $row['handovers_id'] = $handovers_id;
+               $row['handovers_detail_object'] = '押金合计(本班)';
+               $row['handovers_detail_paymentmode'] = '合计';
+               $row['handovers_detail_paycount'] = $v['handovers_detail_paycount'];
+               $row['handovers_detail_payamount'] = round($v['handovers_detail_payamount'],2);
+               $row['company_id'] = $this->auth->company_id; 
+               $handovers_detail[] =$row; 
+            	//获取每个节点的数据，即每种支付项目各种支付方式的汇总笔数和金额
+               $account_object_paymentmode_total = $this->model
+                ->field('account_paymentmode as handovers_detail_paymentmode,count(*) as handovers_detail_paycount,sum(account_cost) as handovers_detail_payamount')   
+                ->where($where)
+               ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])
+                ->where('account_object','like','%押%')
+                ->group('account_paymentmode')
+                ->order($sort, $order) 
+                ->paginate($limit);
+               
+               foreach ($account_object_paymentmode_total as $j => $u) {
+               $row = [];
+               $row['handovers_id'] = $handovers_id;
+               $row['handovers_detail_object'] = '押金合计(本班)';
+               $row['handovers_detail_paymentmode'] = $u['handovers_detail_paymentmode'];
+               $row['handovers_detail_paycount'] = $u['handovers_detail_paycount'];
+               $row['handovers_detail_payamount'] = round($u['handovers_detail_payamount'],2);
+               $row['company_id'] = $this->auth->company_id; 
+               $handovers_detail[] =$row;              
+               }
+            
+               }  
+               
+               //6、添加尾部营收合计
+               $total_count = 0;
+               $total_cost = 0;
+               foreach ($handovers_paymentmode as $j => $u) {
+               	
+               	$count =0;
+                  $cost = 0; 
+               	foreach($handovers_detail as $k =>$v){  
+               		if(stripos($v['handovers_detail_object'], '营收合计')!==false) { 
+               			$x =$u['account_paymentmode'];
+               			if(stripos($v['handovers_detail_paymentmode'], $x)!==false) {            
+               			$count = $count +$v['handovers_detail_paycount'];
+               			$cost = $cost + $v['handovers_detail_payamount'];
+               			
+               			$total_count = $total_count+$v['handovers_detail_paycount'];
+                        $total_cost = $total_cost+$v['handovers_detail_payamount'];
+                     }
+               		}    
+               	} 
+               	$row = [];
+              		$row['handovers_id'] = $handovers_id;
+               	$row['handovers_detail_object'] = '营收合计';
+               	$row['handovers_detail_paymentmode'] = $u['account_paymentmode'];
+               	$row['handovers_detail_paycount'] = $count;
+               	$row['handovers_detail_payamount'] = round($cost,2);
+               	$row['company_id'] = $this->auth->company_id; 
+               	$handovers_detail[] =$row;    
+                }
+               $row = [];
+              	$row['handovers_id'] = $handovers_id;
+               $row['handovers_detail_object'] = '营收合计';
+               $row['handovers_detail_paymentmode'] = '合计';
+               $row['handovers_detail_paycount'] = $total_count;
+               $row['handovers_detail_payamount'] = round($total_cost,2);
+               $row['company_id'] = $this->auth->company_id; 
+               $handovers_detail[] =$row;  
+               
+               //7、添加押金尾部合计
+               $total_count = 0;
+               $total_cost = 0;
+               foreach ($handovers_paymentmode as $j => $u) {
+               	
+               	$count =0;
+                  $cost = 0; 
+               	foreach($handovers_detail as $k =>$v){  
+               		if(stripos($v['handovers_detail_object'], '押金合计')!==false) {           
+               			$x =$u['account_paymentmode'];
+               			if(stripos($v['handovers_detail_paymentmode'], $x)!==false) {            
+               			$count = $count +$v['handovers_detail_paycount'];
+               			$cost = $cost + $v['handovers_detail_payamount'];
+               			
+               			$total_count = $total_count+$v['handovers_detail_paycount'];
+                        $total_cost = $total_cost+$v['handovers_detail_payamount'];
+                     }
+               		}    
+               	}  
+               	$row = [];
+              		$row['handovers_id'] = $handovers_id;
+               	$row['handovers_detail_object'] = '押金合计';
+               	$row['handovers_detail_paymentmode'] = $u['account_paymentmode'];
+               	$row['handovers_detail_paycount'] = $count;
+               	$row['handovers_detail_payamount'] = round($cost,2);
+               	$row['company_id'] = $this->auth->company_id; 
+               	$handovers_detail[] =$row;    
+                }
+               $row = [];
+              	$row['handovers_id'] = $handovers_id;
+               $row['handovers_detail_object'] = '押金合计';
+               $row['handovers_detail_paymentmode'] = '合计';
+               $row['handovers_detail_paycount'] = $total_count;
+               $row['handovers_detail_payamount'] = round($total_cost,2);
+               $row['company_id'] = $this->auth->company_id; 
+               $handovers_detail[] =$row;  
+                    //以上代码完成明细表添加
+                    
+                    
+                    $result1 = $handoversdetail->saveall($handovers_detail);//交接记录主表添加
+                    
                     Db::commit();
                 } catch (ValidateException $e) {
                     Db::rollback();

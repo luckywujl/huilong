@@ -31,6 +31,5 @@ return [
     'Customcustom.custom_status 2'     => '解约',
     'Customcustom.custom_remark'       => '备注',
     'Customcustom.custom_account'      => '账户余额',
-    'Account_custom_account'      => '账户余额',
     'Customcustom.company_id'          => '数据归属'
 ];

@@ -37,13 +37,13 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
 			      })
              
 				           row = {
-                            "field": 'account_count',
+                            "field": '合计-count',
                             "title": '合计笔数',
                             operate: false
                         };
                         column.push(row);
 				           row = {
-                            "field": 'account_cost',
+                            "field": '合计-cost',
                             "title": '合计金额',
                             operate: false
                         };
@@ -64,7 +64,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
 					 showToggle: false,
 					 showColumns: false,
 					 search:false,
-					 showExport: false,
+					// showExport: false,
                 pk: 'account_object',
                 sortName: 'account_object',
                 columns: column

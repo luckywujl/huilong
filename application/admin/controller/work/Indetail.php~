@@ -311,7 +311,7 @@ class Indetail extends Backend
                     		->where(['custom_id'=>$params['iodetail_custom_id']])
                     		->update(['custom_account'=>$newaccount]);
                     }
-                    $accparams['account_custom_account'] = $newaccount;//将实时余额保存到结算表中
+                    
                     Db::commit();	
                     $this->success(null,null,$statement); //返回进场单号给
                 } catch (ValidateException $e) {

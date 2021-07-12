@@ -69,7 +69,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'customcustom.custom_IDentity', title: __('Customcustom.custom_identity'), operate: 'LIKE'},
                         //{field: 'customcustom.custom_status', title: __('Customcustom.custom_status'), formatter: Table.api.formatter.status},
                         {field: 'customcustom.custom_remark', title: __('Customcustom.custom_remark')},
-                        //{field: 'customcustom.custom_account', title: __('Customcustom.custom_account'), operate:'BETWEEN'},
+                        {field: 'customcustom.custom_account', title: __('Customcustom.custom_account'), operate:'BETWEEN'},
                         //{field: 'customcustom.company_id', title: __('Customcustom.company_id')},
                         
                     ]

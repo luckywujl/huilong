@@ -22,7 +22,7 @@ class Handovers extends Backend
     protected $searchFields = '';
     protected $dataLimit = 'personal';
     protected $dataLimitField = 'company_id';
-    protected $noNeedRight = ['index','detail'];
+    protected $noNeedRight = ['index','detail1'];
 
     public function _initialize()
     {
@@ -44,10 +44,10 @@ class Handovers extends Backend
     /**
      * 查看明细
      */
-    public function detail($ids = null)
+    public function detail111($ids = null)
     {
         $row = $this->model->get($ids);
-       
+       // $row = $this->model->where('handovers_id',$ids)->find();
         if (!$row) {
             $this->error(__('No Results were found'));
         }
@@ -135,9 +135,67 @@ class Handovers extends Backend
         }
         
         $this->assignconfig("item",$handovers_paymentmode ); 
+        $this->view->assign("row", $row);
+        return $this->view->fetch();
+    }
+    /**
+     * 编辑
+     */
+    public function detail($ids = null)
+    {
+        $row = $this->model->get($ids);
+        if (!$row) {
+            $this->error(__('No Results were found'));
+        }
+        $adminIds = $this->getDataLimitAdminIds();
+        if (is_array($adminIds)) {
+            if (!in_array($row[$this->dataLimitField], $adminIds)) {
+                $this->error(__('You have no permission'));
+            }
+        }
+        list($where, $sort, $order, $offset, $limit) = $this->buildparams();
+        //获取支付方式信息
+        $handoversdetail = new financial\Handoversdetail();//定义数据模型
+        $handovers_paymentmode = $handoversdetail
+        	->field('handovers_detail_paymentmode')
+        	->where(['handovers_detail_paymentmode'=>['NEQ','合计'],'handovers_id'=>$row['handovers_id']])
+        	->group('handovers_detail_paymentmode')
+        	->select();
+        $handovers_object = $handoversdetail
+            	->field('handovers_detail_object')
+            	//->where($where)
+            	->where(['handovers_id'=>$row['handovers_id']])
+            	->group('handovers_detail_object')
+            	//->order('handovers_detail_object')
+            	->paginate($limit);
+        if ($this->request->isAjax()) {
+            //如果发送的来源是Selectpage，则转发到Selectpage
+            if ($this->request->request('keyField')) {
+                return $this->selectpage();
+            }
+            
+            $handovers_list=[]; 
+            foreach ($handovers_object as $k => $v) {
+               $rows = [];
+               $rows['handovers_detail_object'] = $v['handovers_detail_object'];
+               $handovers_detail = $handoversdetail
+               	->where($where)
+               	->where(['handovers_id'=>$row['handovers_id'],'handovers_detail_object'=>$v['handovers_detail_object']])
+               	->order('handovers_detail_paymentmode')
+               	->select();
+               foreach ($handovers_detail as $j=> $u) {
+               	$rows[$u['handovers_detail_paymentmode'].'-count'] = $u['handovers_detail_paycount'];
+               	$rows[$u['handovers_detail_paymentmode'].'-cost'] = $u['handovers_detail_payamount'];      
+               } 
+               $handovers_list[] = $rows;
+            }
+            $result = array("total" => $handovers_object->total(), "rows" => $handovers_list);
+            return json($result);
+            
+         }
+        $this->assignconfig("item",$handovers_paymentmode ); 
         $this->assignconfig("ids",$ids);
         $this->view->assign("row", $row);
         return $this->view->fetch();
     }
-    
 }

@@ -94,19 +94,21 @@ class Payment extends Backend
         $paymentmode = new base\Paymentmode();//支付方式
             $handoverstime = $this->model
             			//->where($where)
-            			->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])
+            			->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0,'company_id'=>$this->auth->company_id])
             			->order('account_date','asc')->limit(1)->select();
             if (count($handoverstime)>0) {
         	       $item = $handoverstime[0];
         	       $handovers_begintime = $item['account_date'];//交班开始时间
         	  	    $handoverstime = $this->model
             			//->where($where)
-            			->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])
+            			->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0,'company_id'=>$this->auth->company_id])
             			->order('account_date','desc')->limit(1)->select();
             	 $item = $handoverstime[0];
         	       $handovers_endtime = $item['account_date'];//交班截止时间
         	      	} else {
-        	  	   	$this->error('没有交班数据！');
+        	  	   	//$this->error('没有交班数据！');
+        	  	   	$handovers_begintime = time();//交班截止时间
+        	  	   	$handovers_endtime = time();//交班截止时间
         	      	}
         	    //0、先查一下有没有需要接上一班的数据
         	    $handovers_last = $handovers
@@ -134,7 +136,7 @@ class Payment extends Backend
               
               $account_detail = $this->model  //本班交易明细中的支付方式
                 ->field('account_paymentmode as paymentmode')   
-                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])
+                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0,'company_id'=>$this->auth->company_id])
                 ->group('account_paymentmode')
                 ->order('account_paymentmode asc') 
                 ->select(); 
@@ -149,7 +151,7 @@ class Payment extends Backend
             	$handovers_paymentmode = $this->model
                 ->field('account_paymentmode,count(*) as account_count,sum(account_cost) as account_cost')   
                 //->where('account_date','between',[strtotime(mb_substr($params['statement_date'],0,19)),strtotime(mb_substr($params['statement_date'],22,19))])
-                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])
+                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0,'company_id'=>$this->auth->company_id])
                 ->group('account_paymentmode')
                 ->order('account_paymentmode asc') 
                 ->select(); 
@@ -195,7 +197,7 @@ class Payment extends Backend
                //$row['account_cost'] = round($v['account_cost'],2);//总额
             	//获取每个节点的数据，即每种支付项目各种支付方式的汇总笔数和金额
                $handovers_last_object_paymentmode_total = $handoversdetail
-                ->field('handovers_detail_object as account_object,handovers_detail_paymentmode as account_paymentmode,count(*) as account_count,sum(handovers_detail_payamount) as account_cost')   
+                ->field('handovers_detail_object as account_object,handovers_detail_paymentmode as account_paymentmode,handovers_detail_paycount as account_count,sum(handovers_detail_payamount) as account_cost')   
                 ->where($where)
                 ->where(['handovers_id'=>$handovers_last['handovers_id']])
                 ->where('handovers_detail_object',$v['account_object'])
@@ -216,7 +218,7 @@ class Payment extends Backend
             $account_object = $this->model
                 ->field('account_object as account_object,count(*) as account_count,sum(account_cost) as account_cost')   
                 ->where($where)
-                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])
+                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0,'company_id'=>$this->auth->company_id])
                 ->group('account_object')
                 ->order('account_object asc') 
                 ->paginate($limit);  
@@ -232,7 +234,7 @@ class Payment extends Backend
                $account_object_paymentmode_total = $this->model
                 ->field('account_object,account_paymentmode,count(*) as account_count,sum(account_cost) as account_cost')   
                 ->where($where)
-                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])
+                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0,'company_id'=>$this->auth->company_id])
                 ->where('account_object',$v['account_object'])
                 ->group('account_object,account_paymentmode')
                 ->order($sort, $order) 
@@ -251,7 +253,7 @@ class Payment extends Backend
             $handovers_object_a = $this->model
                 ->field('count(*) as account_count,sum(account_cost) as account_cost')   
                 ->where($where)
-                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])
+                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0,'company_id'=>$this->auth->company_id])
                 ->where('account_object','notlike','%押%')
                 //->group('account_object')
                 //->order('account_object asc') 
@@ -268,7 +270,7 @@ class Payment extends Backend
                $account_object_paymentmode_total = $this->model
                 ->field('account_paymentmode,count(*) as account_count,sum(account_cost) as account_cost')   
                 ->where($where)
-               ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])
+               ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0,'company_id'=>$this->auth->company_id])
                 ->where('account_object','notlike','%押%')
                 ->group('account_paymentmode')
                 ->order($sort, $order) 
@@ -287,7 +289,7 @@ class Payment extends Backend
             $handovers_object_a = $this->model
                 ->field('count(*) as account_count,sum(account_cost) as account_cost')   
                 ->where($where)
-                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])
+                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0,'company_id'=>$this->auth->company_id])
                 ->where('account_object','like','%押%')
                 //->group('account_object')
                 //->order('account_object asc') 
@@ -304,7 +306,7 @@ class Payment extends Backend
                $account_object_paymentmode_total = $this->model
                 ->field('account_paymentmode,count(*) as account_count,sum(account_cost) as account_cost')   
                 ->where($where)
-               ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])
+               ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0,'company_id'=>$this->auth->company_id])
                 ->where('account_object','like','%押%')
                 ->group('account_paymentmode')
                 ->order($sort, $order) 
@@ -456,7 +458,7 @@ class Payment extends Backend
               
               $account_detail = $this->model  //本班交易明细中的支付方式
                 ->field('account_paymentmode as paymentmode')   
-                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])
+                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0,'company_id'=>$this->auth->company_id])
                 ->group('account_paymentmode')
                 ->order('account_paymentmode asc') 
                 ->select(); 
@@ -471,7 +473,7 @@ class Payment extends Backend
             	$handovers_paymentmode = $this->model
                 ->field('account_paymentmode,count(*) as account_count,sum(account_cost) as account_cost')   
                 //->where('account_date','between',[strtotime(mb_substr($params['statement_date'],0,19)),strtotime(mb_substr($params['statement_date'],22,19))])
-                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0])
+                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0,'company_id'=>$this->auth->company_id])
                 ->group('account_paymentmode')
                 ->order('account_paymentmode asc') 
                 ->select(); 
@@ -706,10 +708,17 @@ class Payment extends Backend
                $row['handovers_detail_payamount'] = round($total_cost,2);
                $row['company_id'] = $this->auth->company_id; 
                $handovers_detail[] =$row;  
-                    //以上代码完成明细表添加
-                    
-                    
-                    $result1 = $handoversdetail->saveall($handovers_detail);//交接记录主表添加
+               //以上代码完成明细表添加
+               $result1 = $handoversdetail->saveall($handovers_detail);//交接记录明细表写库
+               //对原始数据变更状，防止重复交班
+               //0、将financial_account表列account_handovers（是否交班）改为1
+               $handovers_result = $this->model
+                ->where(['account_operator'=>$this->auth->nickname,'account_handovers'=>0,'company_id'=>$this->auth->company_id])
+                ->update(['account_handovers'=>1]);
+                //1、对上班的交接表状态变更为已接班financial_handovers表上班记录的handovers_status变更为1，即已接班
+               $handovers_last_result = $handovers
+        	    	->where(['handovers_successor'=>$this->auth->nickname,'handovers_status'=>0,'company_id'=>$this->auth->company_id])
+        	    	->update(['handovers_status'=>1]); 
                     
                     Db::commit();
                 } catch (ValidateException $e) {
@@ -723,7 +732,7 @@ class Payment extends Backend
                     $this->error($e->getMessage());
                 }
                 if ($result !== false) {
-                    $this->success();
+                    $this->success(null,null,$handovers_id); //返回进场单号给
                 } else {
                     $this->error(__('No rows were inserted'));
                 }

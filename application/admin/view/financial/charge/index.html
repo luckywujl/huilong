@@ -1,0 +1,74 @@
+<div class="panel panel-default panel-intro">
+    {:build_heading()}
+
+    <div class="panel-body">
+      <form id="add-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-1">{:__('Charge_type')}:</label>
+        <div class="col-xs-12 col-sm-2">                     
+            <select  id="c-charge_type" class="form-control selectpicker" name="row[charge_type]">
+                {foreach name="chargeTypeList" item="vo"}
+                    <option value="{$key}" {in name="key" value=""}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+        </div> 
+        
+        <label class="control-label col-xs-12 col-sm-1">{:__('Charge_object')}:</label>
+        <div class="col-xs-12 col-sm-2">
+            <input id="c-charge_object" data-rule="required" data-source="base/payobject/index" data-field="payobject" data-primary-key="payobject" class="form-control selectpage" name="row[charge_object]" type="text">
+        </div>
+  
+        <label class="control-label col-xs-12 col-sm-1">{:__('Charge_custom_id')}:</label>
+        <div class="col-xs-12 col-sm-2">
+            <input id="c-charge_custom_id" data-rule="required" data-source="custom/custom/index" data-field="custom_name" data-primary-key="custom_id" class="form-control selectpage" name="row[charge_custom_id]" type="text" value="">
+        </div>
+     </div>
+     <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-1">{:__('Charge_amount')}:</label>
+        <div class="col-xs-12 col-sm-2">
+            <input id="c-charge_amount" data-rule="required" class="form-control" name="row[charge_amount]" type="number">
+        </div>
+  
+        <label class="control-label col-xs-12 col-sm-1">{:__('Charge_paymentmode')}:</label>
+        <div class="col-xs-12 col-sm-2">
+            <input id="c-charge_paymentmode" data-rule="required" data-source="base/paymentmode/index" data-field="paymentmode" data-primary-key="paymentmode" class="form-control selectpage" name="row[charge_paymentmode]" type="text">
+        </div>
+    
+        <label class="control-label col-xs-12 col-sm-1">{:__('Charge_remark')}:</label>
+        <div class="col-xs-12 col-sm-2">
+            <input id="c-charge_remark" class="form-control " rows="5" name="row[charge_remark]" cols="50">
+        </div>
+    </div>
+   
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+</form>
+       <div id="myTabContent" class="tab-content">
+            <div class="tab-pane fade active in" id="one">
+                <div class="widget-body no-padding">
+                    <div id="toolbar" class="toolbar">
+                        <a href="javascript:;" class="btn btn-primary btn-refresh" title="{:__('Refresh')}" ><i class="fa fa-refresh"></i> </a>
+                        <a href="javascript:;" class="btn btn-success btn-add {:$auth->check('financial/charge/add')?'':'hide'}" title="{:__('Add')}" ><i class="fa fa-plus"></i> {:__('Add')}</a>
+                        <a href="javascript:;" class="btn btn-success btn-edit btn-disabled disabled {:$auth->check('financial/charge/edit')?'':'hide'}" title="{:__('Edit')}" ><i class="fa fa-pencil"></i> {:__('Edit')}</a>
+                        <a href="javascript:;" class="btn btn-danger btn-del btn-disabled disabled {:$auth->check('financial/charge/del')?'':'hide'}" title="{:__('Delete')}" ><i class="fa fa-trash"></i> {:__('Delete')}</a>
+                        <a href="javascript:;" class="btn btn-info btn-print btn-disabled disabled {:$auth->check('financial/charge/print')?'':'hide'}" title="{:__('补打票据')}" ><i class="fa fa-leaf"></i> {:__('补打票据')}</a>
+                        
+
+                        
+                    </div>
+                    <table id="table" class="table table-striped table-bordered table-hover table-nowrap"
+                           data-operate-edit="{:$auth->check('financial/account/edit')}" 
+                           data-operate-del="{:$auth->check('financial/account/del')}" 
+                           width="100%">
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

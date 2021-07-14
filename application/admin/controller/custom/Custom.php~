@@ -21,7 +21,6 @@ class Custom extends Backend
     protected $searchFields = 'custom_name,custom_code,custom_address,custom_IDentity';
     protected $dataLimit = 'personal';
     protected $dataLimitField = 'company_id';
-    protected $noNeedRight = ['index'];
 
     public function _initialize()
     {

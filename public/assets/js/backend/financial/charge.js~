@@ -5,8 +5,12 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
             // 初始化表格参数配置
             Table.api.init({
                 extend: {
-                    index_url: 'financial/recharge/index' + location.search,
-                    
+                    index_url: 'financial/charge/index' + location.search,
+                    add_url: 'financial/charge/add',
+                    edit_url: 'financial/charge/edit',
+                    del_url: 'financial/charge/del',
+                    multi_url: 'financial/charge/multi',
+                    import_url: 'financial/charge/import',
                     table: 'financial_charge',
                 }
             });
@@ -26,12 +30,13 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
                         {field: 'charge_date', title: __('Charge_date'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                         {field: 'charge_type', title: __('Charge_type'), searchList: {"0":__('Charge_type 0'),"1":__('Charge_type 1')}, formatter: Table.api.formatter.normal},
                         {field: 'charge_object', title: __('Charge_object'), operate: 'LIKE'},
-                        {field: 'charge_cost', title: __('Charge_cost'), operate:'BETWEEN'},
+                        //{field: 'charge_custom_id', title: __('Charge_custom_id')},
                         {field: 'charge_amount', title: __('Charge_amount'), operate:'BETWEEN'},
+                        {field: 'charge_cost', title: __('Charge_cost')},
                         {field: 'charge_paymentmode', title: __('Charge_paymentmode'), operate: 'LIKE'},
                         {field: 'charge_operator', title: __('Charge_operator'), operate: 'LIKE'},
-                        //{field: 'charge_statement_code', title: __('Charge_statement_code'), operate: 'LIKE'},
-                        {field: 'charge_remark', title: __('Custom_account')},
+                        {field: 'charge_statement_code', title: __('Charge_statement_code'), operate: 'LIKE'},
+                        {field: 'charge_remark', title: __('Charge_remark')},
                         //{field: 'company_id', title: __('Company_id')},
                         //{field: 'customcustom.custom_id', title: __('Customcustom.custom_id')},
                         {field: 'customcustom.custom_code', title: __('Customcustom.custom_code'), operate: 'LIKE'},
@@ -44,45 +49,24 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
                         //{field: 'customcustom.custom_IDentity', title: __('Customcustom.custom_identity'), operate: 'LIKE'},
                        // {field: 'customcustom.custom_status', title: __('Customcustom.custom_status'), formatter: Table.api.formatter.status},
                        // {field: 'customcustom.custom_remark', title: __('Customcustom.custom_remark')},
-                        //{field: 'customcustom.custom_charge', title: __('Customcustom.custom_charge'), operate:'BETWEEN'},
+                        {field: 'charge_custom_account', title: __('Charge_custom_account'), operate:'BETWEEN'},
                         //{field: 'customcustom.company_id', title: __('Customcustom.company_id')},
-                        //{field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
+                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ]
             });
 
             // 为表格绑定事件
             Table.api.bindevent(table);
-            //提交
-				$(document).on("click", ".btn-accept", function(){
-				    $("#add-form").attr("action","financial/recharge/index").submit(); 
-				});
-				
-				//提交
-				$(document).on("click", ".btn-pay", function(){
-				    //弹窗显示支付方式
-         	  Fast.api.open('base/pay/pay?amount='+$("#c-charge_cost").val(),'付款',{//?card_code=" + $(this).attr("id") + "&multiple=" + multiple + "&mimetype=" + mimetype, __('Choose'), {
-	           area:['60%', '70%'],
-		           callback: function (data) {
-		           	
-		           	url = "financial/recharge/recharge?payment="+data;
-		           	$("#add-form").attr("action",url).submit(); 
-		           	//document.getElementById("add-form").action="../financial/recharge/index?payment="+data;
-		           	//document.getElementById("add-form").submit();
-		           	
-		           	 	
-	       	    }
-	            });
-				});
             //打印
 				
 				$(document).on("click", ".btn-print", function(index){
 					var ids = Table.api.selectedids(table);
 				    $.ajax({
-                        url: "financial/recharge/print?charge_id="+ids,
+                        url: "financial/charge/print?charge_id="+ids,
                         type: 'post',
                         dataType: 'json',
-                        //data: {charge_id:ids},
+                       
                         success: function (ret) {
                             var options ={
                                 templateCode:'rhnpaccount',
@@ -93,38 +77,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
                             Backend.api.toastr.error(e.message);
                         }
                     });		
-				});
-				
-				//输入卡号或内码，按回车键，到库里查找卡信息
-				$("#c-card_encode").bind("keypress",function (event) {
-				if (event.keyCode =='13')
-				{
-				//再更新客户信息
-				Fast.api.ajax({
-        			url:'custom/card/getcardinfo',        													     
-             	data:{card_info:$("#c-card_encode").val()} //再将收到的create_code用POST方式发给主表控制器的total
-         	 }, 
-         	 function (data,ret) { //success 用于接收主表控制器发过来的数据
-         	   $("#c-charge_custom_id").val(data.custom_id);
-         	   $("#c-charge_custom_id").selectPageRefresh();
-					$("#c-custom_customtype").val(data.custom_customtype);
-					$("#c-card_encode").val(data.card_code);
-					$("#c-custom_account").val(data.custom_account);
-         	   
-         		console.info(data);     													      
-               return false;    															
-           	},function(data){
-               //失败的回调 
-					$("#c-charge_custom_id").val('');
-         	   $("#c-charge_custom_id").selectPageRefresh();
-					$("#c-custom_customtype").val('');
-					$("#c-card_encode").val('');
-					$("#c-custom_charge").val('');
-           		//return false;	
-            }											  		 		  
- 				);
- 			   	
-				}
 				});
             
             Controller.api.bindevent();
@@ -142,16 +94,11 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
 		
 					$("#c-charge_remark").val('');
 					$("#c-charge_amount").val('');//清空金额和备注信息
-					$("#c-charge_custom_id").val('');
-         	   $("#c-charge_custom_id").selectPageRefresh();
-					$("#c-custom_customtype").val('');
-					$("#c-card_encode").val('');
-					$("#c-custom_account").val('');
 					
 					
 					//打印单据
 					$.ajax({
-                        url: "financial/recharge/print",
+                        url: "financial/charge/print",
                         type: 'post',
                         dataType: 'json',
                         data: {charge_id:data.charge_id},

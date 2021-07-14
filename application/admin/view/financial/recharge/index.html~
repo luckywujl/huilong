@@ -15,7 +15,7 @@
             <input id="c-charge_object"  class="form-control" name="row[charge_object]" type="text" value="客户充值">
         </div>
   
-        <label class="control-label col-xs-12 col-sm-1">{:__('Charge_custom_id')}:</label>
+        <label class="control-label col-xs-12 col-sm-1">{:__('Account_custom_id')}:</label>
         <div class="col-xs-12 col-sm-2">
             <input id="c-charge_custom_id" data-rule="required" data-source="custom/custom/index" data-field="custom_name" data-primary-key="custom_id" class="form-control selectpage" name="row[charge_custom_id]" type="text" value="">
         </div>
@@ -39,12 +39,12 @@
             <input id="c-charge_amount" data-rule="required" class="form-control" name="row[charge_amount]" type="number">
         </div>
         
-        <label class="control-label col-xs-12 col-sm-1">{:__('Charge_cost')}:</label>
+        <label class="control-label col-xs-12 col-sm-1">{:__('Account_cost')}:</label>
         <div class="col-xs-12 col-sm-1">
             <input id="c-charge_cost" data-rule="required" class="form-control" name="row[charge_cost]" type="number">
         </div>
   
-        <label class="control-label col-xs-12 col-sm-1">{:__('Charge_paymentmode')}:</label>
+        <label class="control-label col-xs-12 col-sm-1">{:__('Account_paymentmode')}:</label>
         <div class="col-xs-12 col-sm-2">
             <input id="c-charge_paymentmode" data-rule="required" data-source="base/paymentmode/index" data-field="paymentmode" data-primary-key="paymentmode" class="form-control selectpage" name="row[charge_paymentmode]" type="text">
         </div>

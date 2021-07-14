@@ -158,7 +158,7 @@ class Indetail extends Backend
         return $this->view->fetch();
     }
     /**
-     * 添加
+     * 进场收费
      */
     public function add()
     {
@@ -303,17 +303,19 @@ class Indetail extends Backend
                     $accparams['account_statement_code'] = $staparams['statement_code'];
                     $accparams['account_remark'] = $params['iodetail_remark'];
                     $accparams['company_id'] = $this->auth->company_id;
-                    $result = $account->allowField(true)->save($accparams);
+                    
                     if ($params['iodetail_paymentmode']=='储值卡') {
                     //加入扣卡代码
                     $newaccount = $customresult['custom_account']-$params['iodetail_cost'];
                     $custom_acc = $custom
                     		->where(['custom_id'=>$params['iodetail_custom_id']])
                     		->update(['custom_account'=>$newaccount]);
+                    
+                    $accparams['account_custom_account'] = $customresult['custom_account']-$params['iodetail_cost'];//将实时余额保存到结算表中
                     }
-                    $accparams['account_custom_account'] = $newaccount;//将实时余额保存到结算表中
+                    $result = $account->allowField(true)->save($accparams);
                     Db::commit();	
-                    $this->success(null,null,$statement); //返回进场单号给
+                    
                 } catch (ValidateException $e) {
                     Db::rollback();
                     $this->error($e->getMessage());
@@ -325,7 +327,7 @@ class Indetail extends Backend
                     $this->error($e->getMessage());
                 }
                 if ($result !== false) {
-                    $this->success();
+                    $this->success(null,null,$statement); //返回进场单号给
                 } else {
                     $this->error(__('No rows were inserted'));
                 }

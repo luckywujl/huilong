@@ -1,0 +1,108 @@
+<form id="add-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+		<h3>应付金额：</h3>
+      <center><h1>￥{$amount}</h1></center>
+    <div class="col-xs-12 col-sm-6" hidden="hidden" >
+      <input id="c-amount_c"  class="form-control" name="row[amount_c]" type="number" value="{$amount}">
+	 </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-3">{:__('Paymentmode')}:</label>
+        <div class="col-xs-12 col-sm-6">
+            <input id="c-paymentmode" class="form-control selectpage" data-source="base/pay/paymentmode" data-field="paymentmode" data-primary-key="paymentmode" name="row[paymentmode]" type="text" value="现金">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-3">{:__('Amount')}:</label>
+        <div class="col-xs-12 col-sm-6">
+            <input id="c-amount" class="form-control" name="row[amount]" type="number" value="0">
+        </div>
+        <div class="col-xs-12 col-sm-2">
+           <button type="button" class="btn btn-success btn-pay " onClick="addRow()">{:__('Add')}</button>
+           <button type="button" class="btn btn-del btn-del " onClick="delRow()">{:__('Del')}</button>
+          
+       </div>
+    </div>
+    
+    
+    <table width="400" cellspacing="2" id="table1" style="font-size:14px; border:1px solid #cad9ea;margin:0 auto;margin-top:20px">
+		<tr bgcolor="#90EE90" height=30>
+			<td>序号</td>
+			<td>支付方式</td>
+			<td>支付金额</td>
+		</tr>
+		<tr  height=30>
+			<td>1</td>
+			<td>现金</td>
+			<td>{$amount}</td>
+		</tr>
+	</table>
+
+<div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-4"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <label class="control-label col-xs-12 col-sm-2"></label>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Cancel')}</button>
+        </div>
+    </div>
+</form>
+<script>
+var flag=false,number=1,amount=0;
+function addRow(){
+	if ($("#c-paymentmode").val()!=="") {
+	  if ($("#c-amount").val()>$("#c-amount_c").val()) {
+				//$("#c-amount").val($("#c-amount_c").val());
+			}
+		if ($("#c-amount").val()>0) {
+			
+			//添加一行
+    		var newTr=table1.insertRow(table1.rows.length);
+    		//添加两列
+    		var newTd0=newTr.insertCell();
+    		var newTd1=newTr.insertCell();
+    		var newTd2=newTr.insertCell();
+    		//设置列内容和属性
+    
+    		newTr.bgcolor="#909090";
+    
+    		number++;
+    		newTd0.innerText=number;
+    		newTd0.height = 30;
+    		newTd1.innerText=$("#c-paymentmode").val();
+    		newTd2.innerText=$("#c-amount").val();
+    		//$("#c-amount").val($("#c-amount_c").val()-$("#c-amount").val());
+    		countRow();
+    		
+    		
+		}
+	}
+    
+    
+}
+function delRow(){
+    if(number>0){
+        
+        flag=!flag;
+        table1.deleteRow(table1.rows.length-1);
+        //$("#c-amount").val($("#c-amount_c").val()-$("#c-amount").val());
+        number--;
+        
+    }
+    countRow();
+}
+
+function countRow(){
+    amount = 0
+    if(number>0){
+    	var t =document.getElementById('table1')
+       for (var i=1;i<t.rows.length;i++) {
+       	 amount = amount+parseFloat(t.rows[i].cells[2].innerText);
+       } 
+       
+       //$("#c-amount_c").val(amount);
+    }
+    $("#c-amount").val($("#c-amount_c").val()-amount);
+    
+}
+
+
+</script>

@@ -133,8 +133,14 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             // 为表格绑定事件
             Table.api.bindevent(table1);
             $(document).on("click", ".btn-print", function(){
-    				window.print(add-form);
+    				window.print();
 				});
+				 //关闭时执行
+            parent.window.$(".layui-layer-iframe").find(".layui-layer-close").on('click',function () {
+                    
+                    Fast.api.close(); //往父窗口回调参数 
+                  
+             });
         		Controller.api.bindevent();
         },
         api: {

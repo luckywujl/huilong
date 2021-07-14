@@ -5,7 +5,7 @@ namespace app\admin\model\financial;
 use think\Model;
 
 
-class Recharge extends Model
+class Charge extends Model
 {
 
     
@@ -43,11 +43,10 @@ class Recharge extends Model
         return isset($list[$value]) ? $list[$value] : '';
     }
 
-
-
-
-    public function customcustom()
+	 public function customcustom()
     {
         return $this->belongsTo('app\admin\model\custom\Custom', 'charge_custom_id', 'custom_id', [], 'LEFT')->setEagerlyType(0);
     }
+
+
 }

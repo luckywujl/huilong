@@ -146,7 +146,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
          	   $("#c-charge_custom_id").selectPageRefresh();
 					$("#c-custom_customtype").val('');
 					$("#c-card_encode").val('');
-					$("#c-custom_account").val('');
+					$("#c-custom_charge").val('');
 					
 					
 					//打印单据

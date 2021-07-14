@@ -13,7 +13,7 @@ class Recharge extends Model
     
 
     // 表名
-    protected $name = 'financial_charge';
+    protected $name = 'financial_account';
     
     // 自动写入时间戳字段
     protected $autoWriteTimestamp = false;
@@ -25,21 +25,21 @@ class Recharge extends Model
 
     // 追加属性
     protected $append = [
-        'charge_type_text'
+        'account_type_text'
     ];
     
 
     
-    public function getChargeTypeList()
+    public function getAccountTypeList()
     {
-        return ['0' => __('Charge_type 0'), '1' => __('Charge_type 1')];
+        return ['0' => __('Account_type 0'), '1' => __('Account_type 1')];
     }
 
 
-    public function getChargeTypeTextAttr($value, $data)
+    public function getAccountTypeTextAttr($value, $data)
     {
-        $value = $value ? $value : (isset($data['charge_type']) ? $data['charge_type'] : '');
-        $list = $this->getChargeTypeList();
+        $value = $value ? $value : (isset($data['account_type']) ? $data['account_type'] : '');
+        $list = $this->getAccountTypeList();
         return isset($list[$value]) ? $list[$value] : '';
     }
 
@@ -48,6 +48,6 @@ class Recharge extends Model
 
     public function customcustom()
     {
-        return $this->belongsTo('app\admin\model\custom\Custom', 'charge_custom_id', 'custom_id', [], 'LEFT')->setEagerlyType(0);
+        return $this->belongsTo('app\admin\model\custom\Custom', 'account_custom_id', 'custom_id', [], 'LEFT')->setEagerlyType(0);
     }
 }

@@ -146,10 +146,43 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             Controller.api.bindevent();
         },
         api: {
-            bindevent: function () {
-                Form.api.bindevent($("form[role=form]"));
+           bindevent: function () {
+                Form.api.bindevent($("form[role=form]"), function(data, ret){
+					//如果我们需要在提交表单成功后做跳转，可以在此使用location.href="链接";进行跳转
+					//Toastr.success("成功");
+               Fast.api.open('financial/handovers/detail?ids='+data,'交班明细',{//?card_code=" + $(this).attr("id") + "&multiple=" + multiple + "&mimetype=" + mimetype, __('Choose'), {
+	            area:['90%', '90%'],  
+	            callback: function (data) {
+		           //	alert(data);//获得到返回所选记录
+		           	$.ajax({
+                        url: "index/logout",
+                        type: 'post',
+                        dataType: 'json',
+                       
+                        success: function (ret) {
+                          parent.location.reload('index/login');
+                        }, error: function (e) {
+                           
+                        }
+                    });
+		            	
+	       	    }
+	            });
+					
+					
+					}, function(data, ret){
+  						Toastr.success("失败");
+					}, function(success, error){
+
+					//bindevent的第三个参数为提交前的回调
+					//如果我们需要在表单提交前做一些数据处理，则可以在此方法处理
+					//注意如果我们需要阻止表单，可以在此使用return false;即可
+					//如果我们处理完成需要再次提交表单则可以使用submit提交,如下
+					//Form.api.submit(this, success, error);
+					//return false;
+					});
             }
-        }
+       	 }
     };
     return Controller;
 });

@@ -14,7 +14,7 @@ return [
     'Custom_remark'       => '备注',
     'Custom_account'      => '账户余额',
     'Custom_principal'    => '本金余额',
-    'Custom_subsidy'      => '赠送余额',
+    'Custom_subsidy'      => '补贴余额',
     'Custom_status'       => '客户状态',
     'Custom_status 0'     => '正常',
     'Custom_status 1'     => '暂停',

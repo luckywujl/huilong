@@ -17,6 +17,10 @@ class Pay extends Backend
      * @var \app\admin\model\base\Pay
      */
     protected $model = null;
+    protected $searchFields = 'account_code,customcustom.custom_name';
+    protected $dataLimit = 'personal';
+    protected $dataLimitField = 'company_id';
+    protected $noNeedRight = ['pay','paymentmode'];
 
     public function _initialize()
     {
@@ -38,7 +42,7 @@ class Pay extends Backend
     /**
      * 支付方式
      */
-    public function index()
+    public function paymentmode()
     {
         //设置过滤方法
         $this->request->filter(['strip_tags', 'trim']);
@@ -66,10 +70,14 @@ class Pay extends Backend
     public function pay()
     {
     	  $params = $this->request->param();//接收过滤条件
+    	  if($params['amount']) {
     	  $this->view->assign("amount",$params['amount'] ); 
         //$this->assignconfig("ids",$ids);
         //$this->view->assign("row", $row);
         return $this->view->fetch();
+     } else {
+      	$this->error(__('No rows were inserted'));
+     }
     }
 
 }

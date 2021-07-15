@@ -23,7 +23,7 @@ class Recharge extends Backend
     protected $searchFields = 'charge_code,customcustom.custom_name';
     protected $dataLimit = 'personal';
     protected $dataLimitField = 'company_id';
-    protected $noNeedRight = [];
+    protected $noNeedRight = ['pay','paymentmode','recharge','print'];
 
     public function _initialize()
     {

@@ -39,10 +39,70 @@
 <div class="form-group layer-footer">
         <label class="control-label col-xs-12 col-sm-4"></label>
         <div class="col-xs-12 col-sm-8">
-            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="button" class="btn btn-success btn-accept ">{:__('OK')}</button>
             <label class="control-label col-xs-12 col-sm-2"></label>
             <button type="reset" class="btn btn-default btn-embossed">{:__('Cancel')}</button>
         </div>
     </div>
 </form>
+<script>
+var flag=false,number=1,amount=0;
+function addRow(){
+	if ($("#c-paymentmode").val()!=="") {
+	  if ($("#c-amount").val()>$("#c-amount_c").val()) {
+				//$("#c-amount").val($("#c-amount_c").val());
+			}
+		if ($("#c-amount").val()>0) {
+			
+			//添加一行
+    		var newTr=table1.insertRow(table1.rows.length);
+    		//添加两列
+    		var newTd0=newTr.insertCell();
+    		var newTd1=newTr.insertCell();
+    		var newTd2=newTr.insertCell();
+    		//设置列内容和属性
+    
+    		newTr.bgcolor="#909090";
+    
+    		number++;
+    		newTd0.innerText=number;
+    		newTd0.height = 30;
+    		newTd1.innerText=$("#c-paymentmode").val();
+    		newTd2.innerText=$("#c-amount").val();
+    		//$("#c-amount").val($("#c-amount_c").val()-$("#c-amount").val());
+    		countRow();
+    		
+    		
+		}
+	}
+    
+    
+}
+function delRow(){
+    if(number>0){
+        
+        flag=!flag;
+        table1.deleteRow(table1.rows.length-1);
+        //$("#c-amount").val($("#c-amount_c").val()-$("#c-amount").val());
+        number--;
+        
+    }
+    countRow();
+}
 
+function countRow(){
+    amount = 0
+    if(number>0){
+    	var t =document.getElementById('table1')
+       for (var i=1;i<t.rows.length;i++) {
+       	 amount = amount+parseFloat(t.rows[i].cells[2].innerText);
+       } 
+       
+       //$("#c-amount_c").val(amount);
+    }
+    $("#c-amount").val($("#c-amount_c").val()-amount);
+    
+}
+
+
+</script>

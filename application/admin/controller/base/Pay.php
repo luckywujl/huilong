@@ -70,10 +70,12 @@ class Pay extends Backend
     public function pay()
     {
     	  $params = $this->request->param();//接收过滤条件
+    	  if($params['amount']) {
     	  $this->view->assign("amount",$params['amount'] ); 
-        //$this->assignconfig("ids",$ids);
-        //$this->view->assign("row", $row);
         return $this->view->fetch();
+     } else {
+      	$this->error(__('No rows were inserted'));
+     }
     }
 
 }

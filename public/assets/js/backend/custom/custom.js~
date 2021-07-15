@@ -34,8 +34,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'custom_tel', title: __('Custom_tel'), operate: 'LIKE'},
                         {field: 'custom_conact', title: __('Custom_conact'), operate: 'LIKE'},
                         {field: 'custom_account', title: __('Custom_account')},
-                        {field: 'custom_principal', title: __('Custom_principal')},
-                        {field: 'custom_subsidy', title: __('Custom_subsidy')},
                         {field: 'custom_status', title: __('Custom_status'), searchList: {"0":__('Custom_status 0'),"1":__('Custom_status 1'),"2":__('Custom_status 2')}, formatter: Table.api.formatter.status},
                         //{field: 'company_id', title: __('Company_id')},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}

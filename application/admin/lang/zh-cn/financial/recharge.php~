@@ -38,5 +38,4 @@ return [
     'Charge_subsidy'				 	   	=> '赠送金额',
     'Custom_account'							=> '账户余额',
     'Custom_account1'						=> '充值前余额',
-    'PAY'						=> '收款',
 ];

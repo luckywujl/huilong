@@ -168,7 +168,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
                             Backend.api.toastr.error(e.message);
                         }
                     });	
-               return false;
+                
 					//刷新表格
    				$("#table").bootstrapTable('refresh');
 					}, function(data, ret){

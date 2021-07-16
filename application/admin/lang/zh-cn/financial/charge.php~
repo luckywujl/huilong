@@ -20,5 +20,4 @@ return [
     'Customcustom.custom_name'=> '客户名称',
     'Customcustom.custom_customtype'=> '客户类型',
     'Customcustom.custom_tel'=> '客户电话',
-    'PAY'						=>'收款',
 ];

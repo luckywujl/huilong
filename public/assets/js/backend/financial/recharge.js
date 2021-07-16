@@ -58,7 +58,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
 				    $("#add-form").attr("action","financial/recharge/index").submit(); 
 				});
 				
-				//提交
+				//收款
 				$(document).on("click", ".btn-pay", function(){
 					if ($("#c-charge_principal").val()!=="")  {
 						if ($("#c-charge_custom_id").val()!=="") {
@@ -66,7 +66,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
          	  Fast.api.open('base/pay/pay?amount='+$("#c-charge_principal").val(),'付款',{//?card_code=" + $(this).attr("id") + "&multiple=" + multiple + "&mimetype=" + mimetype, __('Choose'), {
 	           area:['60%', '70%'],
 		           callback: function (data) {	
-		           alert(data);
+		           //alert(data);
 		           	url = "financial/recharge/recharge?payment="+data;
 		           	$("#add-form").attr("action",url).submit(); 
 	       	    },function (data) {
@@ -172,7 +172,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
 					//刷新表格
    				$("#table").bootstrapTable('refresh');
 					}, function(data, ret){
-  						Toastr.success("失败");
+  						//Toastr.success("失败");
+  						return false;
 					}, function(success, error){
 
 					//bindevent的第三个参数为提交前的回调

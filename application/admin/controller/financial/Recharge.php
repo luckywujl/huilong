@@ -59,6 +59,16 @@ class Recharge extends Backend
                 return $this->selectpage();
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
+            $total = $this->model
+            		  ->field('count(*) as count,sum(charge_principal) as charge_principal,sum(charge_subsidy) as charge_subsidy')
+            		  ->where($where)
+            		  ->where(['charge_object'=>'客户充值','charge_operator'=>$this->auth->nickname])
+            		  ->select();
+            $list_total=[];
+            $list_total['charge_type'] = '合计：';
+            $list_total['charge_principal'] = $total[0]['charge_principal'];
+            $list_total['charge_subsidy'] = $total[0]['charge_subsidy'];		
+           
 
             $list = $this->model
                     ->with(['customcustom'])
@@ -66,6 +76,7 @@ class Recharge extends Backend
                     ->where(['charge_object'=>'客户充值','charge_operator'=>$this->auth->nickname])
                     ->order($sort, $order)
                     ->paginate($limit);
+             $list[] = $list_total;      
 
             foreach ($list as $row) {
                 
@@ -125,8 +136,7 @@ class Recharge extends Backend
                 //生成单号
                 $main = $this->model
                 ->where('charge_date','between time',[date('Y-m-d 00:00:01'),date('Y-m-d 23:59:59')])
-               // ->where(['company_id'=>$this->auth->company_id,'account_object'=>'客户充值'])
-                ->where(['company_id'=>$this->auth->company_id])
+                ->where(['company_id'=>$this->auth->company_id,'charge_object'=>'客户充值'])
             	 -> order('charge_code','desc')->limit(1)->select();
         	       if (count($main)>0) {
         	       $item = $main[0];
@@ -204,6 +214,7 @@ class Recharge extends Backend
                 			if ($this->dataLimit && $this->dataLimitFieldAutoFill) {
                     			$acc[$this->dataLimitField] = $this->auth->company_id;
                 			}
+                			$acc['account_custom_account'] = $params['charge_custom_account'];//将实时余额也写入付款记录表中
                			$acc['account_operator'] = $this->auth->nickname;//经手人信息为当前操作员
                			$acc['account_statement_code'] = $params['charge_code'];
                			$acc['account_paymentmode'] = isset($v['paymentmode']) ?$v['paymentmode']:'现金';

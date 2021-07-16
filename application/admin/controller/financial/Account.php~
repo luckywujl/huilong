@@ -117,8 +117,7 @@ class Account extends Backend
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             $total = $this->model
-            		  ->with(['customcustom'])
-            		  ->field('count(*) as count,sum(account_amount) as account_amount,sum(account_cost) as account_cost')
+            		  ->field('*,count(*) as count,sum(account_amount) as account_amount,sum(account_cost) as account_cost')
             		  ->where($where)
             		  ->where(['account_operator'=>$this->auth->nickname])
             		  ->select();

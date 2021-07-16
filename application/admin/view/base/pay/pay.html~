@@ -41,7 +41,7 @@
         <div class="col-xs-12 col-sm-8">
             <button type="button" class="btn btn-success btn-accept ">{:__('OK')}</button>
             <label class="control-label col-xs-12 col-sm-2"></label>
-            <button type="reset" class="btn btn-default btn-embossed">{:__('Cancel')}</button>
+         
         </div>
     </div>
 </form>

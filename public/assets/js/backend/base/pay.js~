@@ -68,12 +68,19 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             	
             		 if(t.rows.length>0){
    		    			for (var i=1;i<t.rows.length;i++) {
+   		    				amount +=parseFloat(t.rows[i].cells[2].innerText);
    		    				jsonstr+='{"paymentmode":"'+t.rows[i].cells[1].innerText+'","payamount":"'+t.rows[i].cells[2].innerText+'"},';
 							}
 							jsonstr=jsonstr.substring(0,jsonstr.length-1);
   							jsonstr+=']';
    					}
-                    Fast.api.close(jsonstr); //往父窗口回调参数      	
+   					  if (amount==parseFloat($("#c-amount_c").val())) {
+                    Fast.api.close(jsonstr); //往父窗口回调参数   
+                 } else {
+                  
+                  confirm("支付金额小于应付金额！");
+                  return false;
+                 }   	
 					});
         	
             Controller.api.bindevent();

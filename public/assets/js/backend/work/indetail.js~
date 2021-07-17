@@ -147,7 +147,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing','selectpage
 				});
 				
 				//选择货品名称
-				$("#c-iodetail_product_id").data("eSelect", function(){
+				$("#c-iodetail_product").data("eSelect", function(){
    			 //后续操作
    			 if ($("#c-iodetail_custom_customtype").val()=="") {
    			   Toastr.error('请先选择客户');
@@ -156,7 +156,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing','selectpage
    			 
    			 Fast.api.ajax({
         			url:'base/productprice/getproductprice',        													     
-             	data:{product_id:$("#c-iodetail_product_id").val(),custom_type:$("#c-iodetail_custom_customtype").val()} //再将收到的create_code用POST方式发给主表控制器的total
+             	data:{product_name:$("#c-iodetail_product").val(),custom_type:$("#c-iodetail_custom_customtype").val()} //再将收到的create_code用POST方式发给主表控制器的total
          	 }, 
          	 function (data,ret) { //success 用于接收主表控制器发过来的数据
          	   $("#c-iodetail_price").val(data.productprice_price);

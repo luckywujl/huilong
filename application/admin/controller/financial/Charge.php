@@ -47,66 +47,7 @@ class Charge extends Backend
      */
     public function index()
     {
-    	  if ($this->request->isPost()) {
-            $params = $this->request->post("row/a");
-            if ($params) {
-                $params = $this->preExcludeFields($params);
-                
-                //生成单号
-                $main = $this->model
-                ->where('charge_date','between time',[date('Y-m-d 00:00:01'),date('Y-m-d 23:59:59')])
-                ->where(['company_id'=>$this->auth->company_id])
-                ->where('charge_object','<>','客户充值')
-            	 -> order('charge_code','desc')->limit(1)->select();
-        	       if (count($main)>0) {
-        	       $item = $main[0];
-        	  	    $code = '0000'.(substr($item['charge_code'],9,4)+1);
-        	  	    $code = substr($code,strlen($code)-4,4);
-        	      	$params['charge_code'] = 'A'.date('Ymd').$code;
-        	      	} else {
-        	  	   	$params['charge_code']='A'.date('Ymd').'0001';
-        	      	}
-        	      
-        	      $params['charge_date'] =time();	
-        	      $params['charge_cost'] =$params['charge_amount'];
-
-                if ($this->dataLimit && $this->dataLimitFieldAutoFill) {
-                    $params[$this->dataLimitField] = $this->auth->company_id;
-                }
-                $params['charge_operator'] = $this->auth->nickname;//经手人信息为当前操作员
-                $result = false;
-                Db::startTrans();
-                try {
-                    //是否采用模型验证
-                    if ($this->modelValidate) {
-                        $name = str_replace("\\model\\", "\\validate\\", get_class($this->model));
-                        $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.add' : $name) : $this->modelValidate;
-                        $this->model->validateFailException(true)->validate($validate);
-                    }
-                    $result = $this->model->allowField(true)->save($params);
-                    Db::commit();
-                    $charge['charge_id'] =$this->model->charge_id;//出场单ID		
-                    $this->success(null,null,$charge);
-                } catch (ValidateException $e) {
-                    Db::rollback();
-                    $this->error($e->getMessage());
-                } catch (PDOException $e) {
-                    Db::rollback();
-                    $this->error($e->getMessage());
-                } catch (Exception $e) {
-                    Db::rollback();
-                    $this->error($e->getMessage());
-                }
-                if ($result !== false) {
-                    $this->success();
-                } else {
-                    $this->error(__('No rows were inserted'));
-                }
-            }
-            $this->error(__('Parameter %s can not be empty', ''));
-        }
-    	
-    	
+    	 
         //当前是否为关联查询
         $this->relationSearch = true;
         //设置过滤方法
@@ -125,7 +66,7 @@ class Charge extends Backend
             $list_total=[];
             
             $list_total['charge_type'] = '合计：';
-            $list_total['charge_principal'] = $total[0]['charge_principal'];
+            $list_total['charge_principal'] = sprintf("%.2f", $total[0]['charge_principal']);
             //$list_total['charge_subsidy'] = $total[0]['charge_subsidy'];		
 
             $list = $this->model
@@ -258,7 +199,11 @@ class Charge extends Backend
         	      			$acc['account_date'] =time();	
         	      			$acc['account_type'] ='0';
         	      			$acc['account_object'] = $params['charge_object'];
-        	      			$acc['account_custom_id'] = $params['charge_custom_id'];
+        	      			if((isset($v['payremark']) ?$v['payremark']:'0')=='') {
+        	      				$acc['account_custom_id'] = $params['charge_custom_id'];//如果支付方式里不含会员ID，则用结算单中的会员ID
+        	      			}else {
+        	      				$acc['account_custom_id'] = isset($v['payremark']) ?$v['payremark']:'0';//使用传递过来的会员ID
+        	      			}
         	      			$acc['account_amount'] =isset($v['payamount']) ?$v['payamount']:'0';
         	      			$acc['account_cost'] =isset($v['payamount']) ?$v['payamount']:'0';
 
@@ -275,25 +220,25 @@ class Charge extends Backend
                			if ($acc['account_paymentmode']=='储值卡') {
                     			//更新客户余额
     	              			$custom_info = $custom
-    	                			->where('custom_id',$params['charge_custom_id'])
+    	                			->where('custom_id',isset($v['payremark']) ?$v['payremark']:'0')
     	                			->find();
     	                		//将实时余额保存到结算表中
                				$params['charge_custom_account'] = $custom_info['custom_account']-$acc['account_cost'];
                				$acc['account_custom_account'] = $params['charge_custom_account'];//将实时余额也写入付款记录表中
     	                		if($custom_info['custom_principal']>=$acc['account_cost']) {	//如果本金账户够支付，则全部用本金支付
     	                			$custom_result = $custom
-    	                				->where('custom_id',$params['charge_custom_id'])
+    	                				->where('custom_id',isset($v['payremark']) ?$v['payremark']:'0')
     	                				->setDec('custom_principal',$acc['account_cost']);
     	                		} else { //否则先用本金支付，不够的用补贴账户支付
     	                			$custom_result = $custom
-    	                				->where('custom_id',$params['charge_custom_id'])
+    	                				->where('custom_id',isset($v['payremark']) ?$v['payremark']:'0')
     	                				->setDec('custom_subsidy',($acc['account_cost']-$custom_info['custom_principal']));
     	                			$custom_result = $custom
-    	                				->where('custom_id',$params['charge_custom_id'])
+    	                				->where('custom_id',isset($v['payremark']) ?$v['payremark']:'0')
     	                				->setDec('custom_principal',$custom_info['custom_principal']);	
     	                		}
     	                		$custom_result = $custom    //不管用本金还是补贴支付，都要更新账户余额
-    	                				->where('custom_id',$params['charge_custom_id'])
+    	                				->where('custom_id',isset($v['payremark']) ?$v['payremark']:'0')
     	                				->setDec('custom_account',$acc['account_cost']);
                     		}
                     		$account_info[] =$acc;

@@ -1,0 +1,32 @@
+<form id="add-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+		<h4>储值卡待付金额：</h4>
+      <center><h2>￥{$amount}</h2></center>
+    <div class="col-xs-12 col-sm-2" hidden="hidden"  >
+      <input id="c-amount_c"  class="form-control" name="row[amount_c]" type="number" value="{$amount}">
+	 </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Cardcode')}:</label>
+        <div class="col-xs-12 col-sm-2">
+            <input id="c-cardcode" class="form-control "  name="row[paymentmode]" type="text" value="">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Cardpassword')}:</label>
+        <div class="col-xs-12 col-sm-2">
+            <input id="c-cardpassword" class="form-control" name="row[cardpassword]" type="password" value="">
+        </div>
+       
+    </div>
+    
+    
+    
+
+	 <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-1"></label>
+        <div class="col-xs-12 col-sm-2">
+            <button type="button" class="btn btn-success btn-cardaccept ">{:__('OK')}</button>
+            <label class="control-label col-xs-12 col-sm-2"></label>
+         
+        </div>
+    </div>
+</form>

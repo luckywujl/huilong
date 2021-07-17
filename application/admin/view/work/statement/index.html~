@@ -74,9 +74,9 @@
     </div>
     <div class="form-group">
    
-        <label class="control-label col-xs-12 col-sm-1">{:__('Iodetail_product_id')}:</label>
+        <label class="control-label col-xs-12 col-sm-1">{:__('Iodetail_product')}:</label>
         <div class="col-xs-12 col-sm-1">
-            <input id="c-iodetail_product_id"  data-rule="required" data-source="base/product/index" data-field = "product_name" data-primary-key="product_ID" class="form-control selectpage" name="row[iodetail_product_id]" type="text" value="">
+            <input id="c-iodetail_product"  data-rule="required" data-source="base/product/index" data-field = "product_name" data-primary-key="product_name" class="form-control selectpage" name="row[iodetail_product]" type="text" value="">
         </div>
     
         <label class="control-label col-xs-12 col-sm-1">{:__('Iodetail_weight')}:</label>

@@ -111,13 +111,10 @@ class Statement extends Backend
           ->where('iodetail_id',$statement_info['statement_indetail_id'])
           ->find();
         $statement_info['card_code'] = $iodetail_info['iodetail_card_code'];//卡号
-        $account = new financial\Account();
-        $account_info = $account
-        	->where(['account_statement_code'=>$statement_info['statement_code'],'company_id'=>$this->auth->company_id])
-        	->find();
-        	$statement_info['paymentmode']=$account_info['account_paymentmode'];
-        	$statement_info['amount'] = $account_info['account_amount'];   
-        	$statement_info['account_custom_account'] = $account_info['account_custom_account'];       
+        
+        	//$statement_info['statement_paymentmode']=$account_info['_paymentmode'];
+        //	$statement_info['statement_pay'] = $account_info['account_amount'];   
+        //	$statement_info['statement_custom_account'] = $account_info['account_custom_account'];       
 
         $result = array("data" => $statement_info);
        

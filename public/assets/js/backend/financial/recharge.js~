@@ -168,12 +168,12 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
                             Backend.api.toastr.error(e.message);
                         }
                     });	
-               return false;
+              // return false;
 					//刷新表格
    				$("#table").bootstrapTable('refresh');
 					}, function(data, ret){
-  						Toastr.success("失败");
-  						return false;
+  						//Toastr.success("失败");
+  						//return false;
 					}, function(success, error){
 
 					//bindevent的第三个参数为提交前的回调

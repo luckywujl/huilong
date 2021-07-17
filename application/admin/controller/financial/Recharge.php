@@ -66,8 +66,8 @@ class Recharge extends Backend
             		  ->select();
             $list_total=[];
             $list_total['charge_type'] = '合计：';
-            $list_total['charge_principal'] = $total[0]['charge_principal'];
-            $list_total['charge_subsidy'] = $total[0]['charge_subsidy'];		
+            $list_total['charge_principal'] = sprintf("%.2f", $total[0]['charge_principal']);
+            $list_total['charge_subsidy'] = sprintf("%.2f", $total[0]['charge_subsidy']);		
            
 
             $list = $this->model
@@ -199,6 +199,9 @@ class Recharge extends Backend
         	      			}
     	        
     	                foreach($arr as $k => $v){  //在此循环中添加保存到account表中的代码，每一种支付方式均需要保存一次。
+    	                  if((isset($v['paymentmode']) ?$v['paymentmode']:'现金')=='储值卡') {
+    	                  $this->error(__('暂不开通卡对卡转账功能'));
+    	                  }
     	                	$acc = []; 
     	                	$code_A = '0000'.($code_A+1);
         	  	    			$code_A = substr($code_A,strlen($code_A)-4,4);
@@ -243,7 +246,7 @@ class Recharge extends Backend
                     $this->error($e->getMessage());
                 }
                 if ($result !== false) {
-                    $this->success(null,null,$charge);
+                    $this->success('充值完成，正在打印凭证',null,$charge);
                 } else {
                     $this->error(__('No rows were inserted'));
                 }

@@ -381,7 +381,7 @@ class Outdetail extends Backend
                     
                     $staparams['statement_plate_number'] = $params['iodetail_plate_number'];
                     $staparams['statement_mototype'] = $params['iodetail_mototype'];
-                    $staparams['statement_product_id'] = $params['iodetail_product_id'];
+                    $staparams['statement_product'] = $params['iodetail_product'];
                     $staparams['statement_custom_id'] = $params['iodetail_custom_id'];
          
                     $custom = new custom\Custom();

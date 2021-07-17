@@ -117,15 +117,16 @@ class Account extends Backend
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             $total = $this->model
-            		  ->field('*,count(*) as count,sum(account_amount) as account_amount,sum(account_cost) as account_cost')
+            		  ->with(['customcustom'])
+            		  ->field('count(*) as count,sum(account_amount) as account_amount,sum(account_cost) as account_cost')
             		  ->where($where)
             		  ->where(['account_operator'=>$this->auth->nickname])
             		  ->select();
             $list_total=[];
             
             $list_total['account_type'] = '合计：';
-            $list_total['account_amount'] = $total[0]['account_amount'];
-            $list_total['account_cost'] = $total[0]['account_cost'];		
+            $list_total['account_amount'] = sprintf("%.2f", $total[0]['account_amount']);
+            $list_total['account_cost'] = sprintf("%.2f", $total[0]['account_cost']);	
 
 
             $list = $this->model

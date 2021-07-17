@@ -80,9 +80,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
          	  Fast.api.open('base/pay/pay?amount='+$("#c-iodetail_cost").val(),'付款',{//?card_code=" + $(this).attr("id") + "&multiple=" + multiple + "&mimetype=" + mimetype, __('Choose'), {
 	           area:['60%', '70%'],
 		           callback: function (data) {	
-		           //alert(data);
-		           	url = "work/outdetail/accept?payment="+data;
-		           	$("#add-form").attr("action",url).submit(); 
+		           alert(data);
+		           //	url = "work/outdetail/accept?payment="+data;
+		           //	$("#add-form").attr("action",url).submit(); 
 	       	    },function (data) {
 	       	    	
 	       	    }

@@ -199,6 +199,9 @@ class Recharge extends Backend
         	      			}
     	        
     	                foreach($arr as $k => $v){  //在此循环中添加保存到account表中的代码，每一种支付方式均需要保存一次。
+    	                  if((isset($v['paymentmode']) ?$v['paymentmode']:'现金')=='储值卡') {
+    	                  $this->error(__('暂不开通卡对卡转账功能'));
+    	                  }
     	                	$acc = []; 
     	                	$code_A = '0000'.($code_A+1);
         	  	    			$code_A = substr($code_A,strlen($code_A)-4,4);
@@ -214,6 +217,7 @@ class Recharge extends Backend
                 			if ($this->dataLimit && $this->dataLimitFieldAutoFill) {
                     			$acc[$this->dataLimitField] = $this->auth->company_id;
                 			}
+                			$acc['account_custom_account'] = $params['charge_custom_account'];//将实时余额也写入付款记录表中
                			$acc['account_operator'] = $this->auth->nickname;//经手人信息为当前操作员
                			$acc['account_statement_code'] = $params['charge_code'];
                			$acc['account_paymentmode'] = isset($v['paymentmode']) ?$v['paymentmode']:'现金';
@@ -242,7 +246,7 @@ class Recharge extends Backend
                     $this->error($e->getMessage());
                 }
                 if ($result !== false) {
-                    $this->success(null,null,$charge);
+                    $this->success('充值完成，正在打印凭证',null,$charge);
                 } else {
                     $this->error(__('No rows were inserted'));
                 }

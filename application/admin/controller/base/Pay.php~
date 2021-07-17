@@ -3,6 +3,7 @@
 namespace app\admin\controller\base;
 
 use app\common\controller\Backend;
+use app\admin\model\custom as custom;
 
 /**
  * 支付方式
@@ -20,7 +21,7 @@ class Pay extends Backend
     protected $searchFields = 'account_code,customcustom.custom_name';
     protected $dataLimit = 'personal';
     protected $dataLimitField = 'company_id';
-    protected $noNeedRight = ['pay','paymentmode'];
+    protected $noNeedRight = ['pay','paymentmode','cardpay'];
 
     public function _initialize()
     {
@@ -72,12 +73,65 @@ class Pay extends Backend
     	  $params = $this->request->param();//接收过滤条件
     	  if($params['amount']) {
     	  $this->view->assign("amount",$params['amount'] ); 
-        //$this->assignconfig("ids",$ids);
-        //$this->view->assign("row", $row);
         return $this->view->fetch();
      } else {
       	$this->error(__('No rows were inserted'));
      }
+    }
+    
+    /**
+    *验证储值卡
+    */
+    public function cardpay()
+    {
+    	if ($this->request->isPost()) {
+    		$card = new custom\Card();
+    		$card_code = $this->request->post('card_code');
+    		$card_password = $this->request->post('card_password');
+    		$card_amount = $this->request->post('card_amount');
+    		$card_in = $card
+        ->where(['card_code|card_encode'=>$card_code,'card_status'=>0,'company_id'=>$this->auth->company_id])//卡状态要求是正常 
+        ->find();  
+      
+       if ($card_in){
+       	$custom = new custom\Custom();
+       	$custom_info = $custom
+       	->where(['custom_id'=>$card_in['card_custom_id'],'custom_password'=>$card_password,'custom_status'=>0])//商户状态为正常
+       	->find();
+       	if($custom_info) {
+       		if($custom_info['custom_account']>=$card_amount) {
+       		$this->success('执行成功',null,$custom_info);
+       	}else {
+       		$this->error('账户余额不足，请充值！',null,null);
+       	}
+       	}else {
+        	 $this->error('01卡号有误或商户状态异常，请核实',null,null);
+       	}   	
+       } else {
+       	$custom = new custom\Custom();
+       	$custom_info = $custom
+       	->where(['custom_name|custom_code|custom_tel'=>$card_code,'custom_password'=>$card_password,'custom_status'=>0])//商户状态为正常
+       	->find();
+         if($custom_info) {
+       		if($custom_info['custom_account']>=$card_amount) {
+       		$this->success('执行成功',null,$custom_info);
+       	   }else {
+       		$this->error('账户余额不足，请充值！',null,null);
+       	  }
+         } else {
+    	   $this->error('02卡号有误或状态异常，请核实',null,null);
+    	   }
+       } 
+    		
+    	}
+      $params = $this->request->param();//接收过滤条件
+    	if($params['amount']) {
+    		$this->view->assign("amount",$params['amount'] ); 
+      	return $this->view->fetch();
+    	} else {
+      	$this->error(__('No rows were inserted'));
+     	}
+    
     }
 
 }

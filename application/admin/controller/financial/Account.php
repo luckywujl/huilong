@@ -125,8 +125,8 @@ class Account extends Backend
             $list_total=[];
             
             $list_total['account_type'] = '合计：';
-            $list_total['account_amount'] = $total[0]['account_amount'];
-            $list_total['account_cost'] = $total[0]['account_cost'];		
+            $list_total['account_amount'] = sprintf("%.2f", $total[0]['account_amount']);
+            $list_total['account_cost'] = sprintf("%.2f", $total[0]['account_cost']);	
 
 
             $list = $this->model

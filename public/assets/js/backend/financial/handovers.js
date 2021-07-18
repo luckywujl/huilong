@@ -27,10 +27,11 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 columns: [
                     [
                         {checkbox: true},
-                        {field: 'handovers_id', title: __('Handovers_id')},
+                        //{field: 'handovers_id', title: __('Handovers_id')},
                         {field: 'handovers_operator', title: __('Handovers_operator'), operate: 'LIKE'},
                         {field: 'handovers_begintime', title: __('Handovers_begintime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                         {field: 'handovers_endtime', title: __('Handovers_endtime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
+                        {field: 'handovers_successor', title: __('Handovers_successor'), operate: 'LIKE'},
                         {field: 'handovers_count', title: __('Handovers_count')},
                         {field: 'handovers_amount', title: __('Handovers_amount'), operate:'BETWEEN'},
                         {field: 'handovers_type', title: __('Handovers_type'), searchList: {"0":__('Handovers_type 0'),"1":__('Handovers_type 1'),"2":__('Handovers_type 2')}, formatter: Table.api.formatter.status},
@@ -135,7 +136,12 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             $(document).on("click", ".btn-print", function(){
     				window.print();
 				});
-				
+				//关闭时执行
+            parent.window.$(".layui-layer-iframe").find(".layui-layer-close").on('click',function () {
+                    //var ids = Table.api.selectedids(table);   //获取选中的id，获取到的是个数组
+                    Fast.api.close(); //往父窗口回调参数 
+                  
+             });
         		Controller.api.bindevent();
         },
         api: {

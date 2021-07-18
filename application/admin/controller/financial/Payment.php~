@@ -409,11 +409,6 @@ class Payment extends Backend
         		$paymentmode = new base\Paymentmode();//支付方式
         	   $admin = new model\Admin(); 
         	   
-        	   //先进行接班人密码验证(留着以后更新吧)
-        	   
-        	   
-        	   //完成接班人密码验证
-        	   
         	   $account_count = $this->model
                 ->field('count(*) as handovers_detail_paycount,sum(account_cost) as handovers_detail_payamount')   
                 ->where($where)

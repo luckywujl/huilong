@@ -9,6 +9,9 @@ return [
         'config_init' => [
             'geetest',
         ],
+        'response_send' => [
+            'loginvideo',
+        ],
     ],
     'route' => [],
     'priority' => [],

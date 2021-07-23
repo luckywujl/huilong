@@ -63,7 +63,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
           	$(document).on("click", ".btn-pay", function(){
           	 if ($("#c-paymentmode").val()!=="") {
           	   var custom_id = '';	
-          	   if ($("#c-amount").val()>0) {
+          	   if ($("#c-amount").val()!==0) {
           	 	if ($("#c-paymentmode").val()=="储值卡") {
           	 		 //弹窗显示支付方式
          	  		Fast.api.open('base/pay/cardpay?amount='+$("#c-amount").val(),'储值卡支付',{//?card_code=" + $(this).attr("id") + "&multiple=" + multiple + "&mimetype=" + mimetype, __('Choose'), {

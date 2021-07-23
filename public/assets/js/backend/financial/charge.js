@@ -60,10 +60,14 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
             Table.api.bindevent(table);
             //收款
 				$(document).on("click", ".btn-pay", function(){
+					var t = 1;
+					if ($("#c-charge_type").val()=="1") {
+					   t=-1;
+					}
 					if ($("#c-charge_principal").val()!=="")  {
 						if ($("#c-charge_custom_id").val()!=="") {
 				    //弹窗显示支付方式
-         	  Fast.api.open('base/pay/pay?amount='+$("#c-charge_principal").val(),'付款',{//?card_code=" + $(this).attr("id") + "&multiple=" + multiple + "&mimetype=" + mimetype, __('Choose'), {
+         	  Fast.api.open('base/pay/pay?amount='+t*$("#c-charge_principal").val(),'付款',{//?card_code=" + $(this).attr("id") + "&multiple=" + multiple + "&mimetype=" + mimetype, __('Choose'), {
 	           area:['60%', '70%'],
 		           callback: function (data) {	
 		           //alert(data);

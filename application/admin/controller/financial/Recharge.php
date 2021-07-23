@@ -222,6 +222,7 @@ class Recharge extends Backend
                			$acc['account_statement_code'] = $params['charge_code'];
                			$acc['account_paymentmode'] = isset($v['paymentmode']) ?$v['paymentmode']:'现金';
                			$acc['account_remark'] = $params['charge_remark'];
+               			$acc['account_handovers'] = 0;
                			$account_info[] =$acc;
                			
     	                
@@ -229,7 +230,7 @@ class Recharge extends Backend
     	                 	$paymentmode = $paymentmode.$payment;
     	                }
     	                
-    	              $params['charge_paymentmode'] = substr($paymentmode,0,strlen($paymentmode)-1);
+    	              $params['charge_paymentmode'] = mb_substr($paymentmode,0,strlen($paymentmode)-1);
                     $result = $this->model->allowField(true)->save($params);
                     $result1 = $account->allowField(true)->saveall($account_info);
                     $charge['charge_id'] =$this->model->charge_id;//收支ID		

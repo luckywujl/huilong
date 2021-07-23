@@ -493,6 +493,7 @@ class Outdetail extends Backend
                			$acc['account_operator'] = $this->auth->nickname;//经手人信息为当前操作员
                			$acc['account_statement_code'] = $staparams['statement_code'];
                			$acc['account_paymentmode'] = isset($v['paymentmode']) ?$v['paymentmode']:'现金';
+               			$acc['account_handovers'] = 0;
                			$acc['account_remark'] = $staparams['statement_remark'];
                			
                			//以上完成付款记录的添加
@@ -527,7 +528,7 @@ class Outdetail extends Backend
     	                	$payment = (isset($v['paymentmode']) ?$v['paymentmode']:'自定义').(isset($v['payamount']) ?$v['payamount']:'自定义').'、';
     	                 	$paymentmode = $paymentmode.$payment;
     	                }
-    	              $staparams['statement_paymentmode'] = substr($paymentmode,0,strlen($paymentmode)-1);//去掉尾部的、号 
+    	              $staparams['statement_paymentmode'] = mb_substr($paymentmode,0,strlen($paymentmode)-2);//去掉尾部的、号 
 						  $result1 = $sta->allowField(true)->save($staparams);
                     $statement['statement_id'] =$sta->statement_id;//结算单ID
                     $statement['type'] = 1;
@@ -544,7 +545,7 @@ class Outdetail extends Backend
                     $this->error($e->getMessage());
                 }
                 if ($result !== false) {
-                    $this->success(null,null,$statement); 
+                    $this->success('正在打印离场结算单，请稍等...',null,$statement); 
                 } else {
                     $this->error(__('No rows were inserted'));
                 }

@@ -415,7 +415,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing','selectpage
                   return false;    															
                	},function(){
                  //失败的回调 
-           		  //return false;	
+           		  return false;	
                }	);    
 					//刷新表格
    				$("#table").bootstrapTable('refresh');

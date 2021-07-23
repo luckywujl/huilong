@@ -334,7 +334,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
 						$("#c-iodetail_NW").val($("#c-iodetail_inweight").val()-$("#c-iodetail_weight").val());
 						
 					}
-					$("#c-iodetail_cost").val(($("#c-iodetail_price").val()*$("#c-iodetail_NW").val()*$("#c-iodetail_discount").val()/100).toFixed(2));
+					$("#c-iodetail_cost").val(($("#c-iodetail_price").val()*$("#c-iodetail_NW").val()*$("#c-iodetail_discount").val()/100).toFixed(0));
 				
 				}
 				

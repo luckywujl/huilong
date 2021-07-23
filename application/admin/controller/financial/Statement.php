@@ -5,6 +5,7 @@ namespace app\admin\controller\financial;
 use app\common\controller\Backend;
 use think\Db;
 use app\admin\model\custom as custom;
+use app\admin\model\financial as financial;
 /**
  * 结算清单
  *
@@ -136,7 +137,7 @@ class Statement extends Backend
         return $this->view->fetch();
     }
     
-     /**
+    /**
     *反结算
     */
     public function repay($ids="")
@@ -151,7 +152,54 @@ class Statement extends Backend
     		$this->success('反结算完成');
     	}
     	$this->error(__('Parameter %s can not be empty', 'ids'));
-    	$this->success('反结算完成');
+    	
+    }
+    /**
+     * 删除
+     */
+    public function del($ids = "")
+    {
+        if (!$this->request->isPost()) {
+            $this->error(__("Invalid parameters"));
+        }
+        $account = new financial\Account();
+        $ids = $ids ? $ids : $this->request->post("ids");
+        if ($ids) {
+            $pk = $this->model->getPk();
+            $adminIds = $this->getDataLimitAdminIds();
+            if (is_array($adminIds)) {
+                $this->model->where($this->dataLimitField, 'in', $adminIds);
+            }
+            $list = $this->model->where($pk, 'in', $ids)->select();
+
+            $count = 0;
+            Db::startTrans();
+            try {
+                foreach ($list as $k => $v) {
+                	//同时删除收费信息
+                    $account_result = $account
+                    		->where(['account_statement_code'=>$v['statement_code'],'account_handovers'=>0,'company_id'=>$this->auth->company_id])
+                    		->delete();
+                    if(!$account_result) {
+                    		$this->error(__('该单据已经交班，无法删除'));
+                    }
+                    $count += $v->delete();   
+                }
+                Db::commit();
+            } catch (PDOException $e) {
+                Db::rollback();
+                $this->error($e->getMessage());
+            } catch (Exception $e) {
+                Db::rollback();
+                $this->error($e->getMessage());
+            }
+            if ($count) {
+                $this->success();
+            } else {
+                $this->error(__('No rows were deleted'));
+            }
+        }
+        $this->error(__('Parameter %s can not be empty', 'ids'));
     }
     
     /**

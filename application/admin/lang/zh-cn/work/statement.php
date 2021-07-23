@@ -21,6 +21,7 @@ return [
     'Statement_indetail_id'               => '进场单据ID',
     'Statement_outdetail_id'              => '出场单据ID',
     'Statement_checker'                  => '检验人员',
+    'Statement_operator'					  => '操作员',
     'Company_id'                         => '数据归属',
     'Customcustom.custom_id'             => '客户ID',
     'Customcustom.custom_code'           => '客户编号',
@@ -51,6 +52,7 @@ return [
     'Iodetail_iotime'                    => '出场时间',
      'Iodetail_intime'						  => '进场时间',
     'Iodetail_channel'                   => '进/出通道',
+    'Iodetail_price'                   => '单价',
     
     'Iodetail_card_code'                 => '卡号',
     'Iodetail_card_id'                    => '卡号',

@@ -98,6 +98,12 @@ class Charge extends Backend
     	 if(input('?charge_id')) {
     	   $charge_info = $this->model
     	   ->where('charge_id',$params['charge_id'])->find();
+    	   if($charge_info['charge_type']=='0') {
+    	   	$charge_info['charge_type'] = '收款';
+    	   }else{
+    	   	$charge_info['charge_type'] = '退款';
+    	   	$charge_info['charge_principal'] =-1*$charge_info['charge_principal'];
+    	   }
     	 
     	  $custom = new custom\Custom();
     	  $custom_info = $custom
@@ -146,7 +152,9 @@ class Charge extends Backend
         	      	}
         	      
         	      $params['charge_date'] =time();
-        	      $params['charge_type'] ='0';	
+        	      if ($params['charge_type'] =='1'){
+        	      	$params['charge_principal'] = -1*$params['charge_principal'];
+        	      }	
 
                 if ($this->dataLimit && $this->dataLimitFieldAutoFill) {
                     $params[$this->dataLimitField] = $this->auth->company_id;
@@ -178,7 +186,6 @@ class Charge extends Backend
                 	  			->field('account_code')
                 				->where('account_date','between time',[date('Y-m-d 00:00:01'),date('Y-m-d 23:59:59')])
                 				->where(['company_id'=>$this->auth->company_id])
-                				
             	 				->order('account_code','desc')->limit(1)->select();
         	       		if (count($main)>0) {
         	       				$item = $main[0];
@@ -213,6 +220,7 @@ class Charge extends Backend
                			$acc['account_operator'] = $this->auth->nickname;//经手人信息为当前操作员
                			$acc['account_statement_code'] = $params['charge_code'];
                			$acc['account_paymentmode'] = isset($v['paymentmode']) ?$v['paymentmode']:'现金';
+               			$acc['account_handovers'] = 0;
                			$acc['account_remark'] = $params['charge_remark'];
                			
                			//以上完成付款记录的添加
@@ -247,7 +255,7 @@ class Charge extends Backend
     	                 	$paymentmode = $paymentmode.$payment;
     	                }
     	                
-    	              $params['charge_paymentmode'] = substr($paymentmode,0,strlen($paymentmode)-1);//去掉尾部的、号
+    	              $params['charge_paymentmode'] = mb_substr($paymentmode,0,strlen($paymentmode)-1);//去掉尾部的、号
                     $result = $this->model->allowField(true)->save($params);//保存支付记录
                     $result1 = $account->allowField(true)->saveall($account_info);//保存收款记录
                     $charge['charge_id'] =$this->model->charge_id;//收支ID		

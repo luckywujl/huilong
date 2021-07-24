@@ -177,6 +177,10 @@ class Recharge extends Backend
     	              $custom_info = $custom
     	                ->where('custom_id',$params['charge_custom_id'])  
     	                ->find();
+    	              $n = $custom_info['custom_name'];//名称
+    	              $m = $custom_info['custom_tel'];//电话
+    	              $a = $params['charge_principal']+$params['charge_subsidy'];//扣款金额
+    	              $b = $custom_info['custom_account'];//余额
     	              $params['charge_custom_account'] = $custom_info['custom_account'];  
     	              $arr = json_decode($paymentmode['payment'], true);
     	              $paymentmode = '';
@@ -247,6 +251,10 @@ class Recharge extends Backend
                     $this->error($e->getMessage());
                 }
                 if ($result !== false) {
+                	 //发送短信
+             	     $sendrul = 'http://api.smsbao.com/sms?u=luckywujl&p=635fcbe5a0f9a1d9bb83ca8392d0c827&m='.$m.'&c=【汇隆果品】尊敬的'.urlencode($n).'，您本次充值'.urlencode($a).'元，账户余额为'.urldecode($b).'元。';//.urlencode($content);
+                	  $res = file_get_contents($sendrul);
+                	  //完成短信发送
                     $this->success('充值完成，正在打印凭证',null,$charge);
                 } else {
                     $this->error(__('No rows were inserted'));

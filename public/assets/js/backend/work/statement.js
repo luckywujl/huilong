@@ -312,7 +312,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
 				});
 				
 				//输入单价，计算金额
-				$("#c-iodetail_product_price").bind("keyup",function (event) {
+				$("#c-iodetail_price").bind("keyup",function (event) {
 					count(); //计算净重及金额		
 					});
 					

@@ -248,6 +248,11 @@ class Charge extends Backend
     	                		$custom_result = $custom    //不管用本金还是补贴支付，都要更新账户余额
     	                				->where('custom_id',isset($v['payremark']) ?$v['payremark']:'0')
     	                				->setDec('custom_account',$acc['account_cost']);
+    	                	$n = $custom_info['custom_name'];//名称
+    	                  $m = $custom_info['custom_tel'];//电话
+    	                  $a = $acc['account_cost'];//扣款金额
+    	                  $b = $custom_info['custom_account']-$acc['account_cost'];//余额
+    	                  $c = $acc['account_object'];
                     		}
                     		$account_info[] =$acc;
                			//完成储值卡扣款
@@ -272,6 +277,10 @@ class Charge extends Backend
                     $this->error($e->getMessage());
                 }
                 if ($result !== false) {
+                	  //发送短信
+             	     $sendrul = 'http://api.smsbao.com/sms?u=luckywujl&p=635fcbe5a0f9a1d9bb83ca8392d0c827&m='.$m.'&c=【汇隆果品】尊敬的'.urlencode($n).'，您本次缴费'.urlencode($a).'元('.urlencode($c).')，账户余额为'.urldecode($b).'元。';//.urlencode($content);
+                	  $res = file_get_contents($sendrul);
+                	  //完成短信发送
                     $this->success(null,null,$charge);
                 } else {
                     $this->error(__('No rows were inserted'));

@@ -371,6 +371,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing','selectpage
 					//$("#c-iodetail_product_id").val('');
 					//加入判断语句，打印不同的报表
 					if (data.type) {
+					//发送短信
+					//send_sms('[汇隆果品]尊敬的'+data.n+'，您本次缴费'+data.a+'元，账户余额为'+data.b+'元。',data.m);
+					//Fast.api.ajax('http://api.smsbao.com/sms?u=luckywujl&p=635fcbe5a0f9a1d9bb83ca8392d0c827&m='+data.m+'&c=[汇隆果品]尊敬的'+data.n+'，您本次缴费'+data.a+'元，账户余额为'+data.b+'元。');
 					//打印单据
 					$.ajax({
                         url: "work/statement/print",
@@ -430,7 +433,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing','selectpage
 					//Form.api.submit(this, success, error);
 					//return false;
 					});
-            }
+         
+       	 }
        	 }
     };
     return Controller;

@@ -308,6 +308,10 @@ class Outdetail extends Backend
     */
     public function accept() 
     {
+    	  $n = '';//名称
+    	  $m = '';//电话
+    	  $a = 0;//扣款金额
+    	  $b = 0;//余额
     		if ($this->request->isPost()) {
             $params = $this->request->post("row/a");
             $paymentmode = $this->request->param();//接收支付的所有信息
@@ -549,10 +553,12 @@ class Outdetail extends Backend
                     $this->error($e->getMessage());
                 }
                 if ($result !== false) {
+                	if($m!=='') {
                 	  //发送短信
              	     $sendrul = 'http://api.smsbao.com/sms?u=luckywujl&p=635fcbe5a0f9a1d9bb83ca8392d0c827&m='.$m.'&c=【汇隆果品】尊敬的'.urlencode($n).'，您本次缴费'.urlencode($a).'元，账户余额为'.urldecode($b).'元。';//.urlencode($content);
                 	  $res = file_get_contents($sendrul);
                 	  //完成短信发送
+                }
                     $this->success('正在打印离场结算单，请稍等...',null,$statement); 
                 } else {
                     $this->error(__('No rows were inserted'));

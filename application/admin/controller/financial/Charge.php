@@ -130,6 +130,10 @@ class Charge extends Backend
      */
     public function charge()
     {
+        $n = '';//名称
+    	  $m = '';//电话
+    	  $a = 0;//扣款金额
+    	  $b = 0;//余额
     	  if ($this->request->isPost()) {
     	   	$paymentmode = $this->request->param();//接收过滤条件
             $params = $this->request->post("row/a");
@@ -137,6 +141,7 @@ class Charge extends Backend
                 $params = $this->preExcludeFields($params);
                 $account = new financial\Account(); //定义模型
                 $custom = new custom\Custom();
+                
                 //生成单号
                 $main = $this->model
                 ->where('charge_date','between time',[date('Y-m-d 00:00:01'),date('Y-m-d 23:59:59')])
@@ -277,10 +282,12 @@ class Charge extends Backend
                     $this->error($e->getMessage());
                 }
                 if ($result !== false) {
+                	if($m!=='') {
                 	  //发送短信
              	     $sendrul = 'http://api.smsbao.com/sms?u=luckywujl&p=635fcbe5a0f9a1d9bb83ca8392d0c827&m='.$m.'&c=【汇隆果品】尊敬的'.urlencode($n).'，您本次缴费'.urlencode($a).'元('.urlencode($c).')，账户余额为'.urldecode($b).'元。';//.urlencode($content);
                 	  $res = file_get_contents($sendrul);
                 	  //完成短信发送
+                	  }
                     $this->success(null,null,$charge);
                 } else {
                     $this->error(__('No rows were inserted'));

@@ -398,10 +398,12 @@ class Indetail extends Backend
                     $this->error($e->getMessage());
                 }
                 if ($result !== false) {
+                	if($m!=='') {
                 	  //发送短信
              	     $sendrul = 'http://api.smsbao.com/sms?u=luckywujl&p=635fcbe5a0f9a1d9bb83ca8392d0c827&m='.$m.'&c=【汇隆果品】尊敬的'.urlencode($n).'，您本次缴费'.urlencode($a).'元，账户余额为'.urldecode($b).'元。';//.urlencode($content);
                 	  $res = file_get_contents($sendrul);
                 	  //完成短信发送
+                }
                     $this->success('正在打印入场收费单据，请稍等...',null,$statement); //返回进场单号给
                 } else {
                     $this->error(__('No rows were inserted'));

@@ -527,7 +527,11 @@ class Outdetail extends Backend
     	                				->where('custom_id',isset($v['payremark']) ?$v['payremark']:'0')
     	                				->setDec('custom_account',$acc['account_cost']);
     	                	$n = $custom_info['custom_name'];//名称
-    	                  $m = $custom_info['custom_tel'];//电话
+    	                  if($custom_info['custom_sms']==1) {
+    	                  	$m = $custom_info['custom_tel'];//电话
+    	                  }else {
+    	                  	$m='';
+    	                  }
     	                  $a = $acc['account_cost'];//扣款金额
     	                  $b = $custom_info['custom_account']-$acc['account_cost'];//余额
                     		}

@@ -19,5 +19,9 @@ return [
     'Custom_status 0'     => '正常',
     'Custom_status 1'     => '暂停',
     'Custom_status 2'     => '解约',
+    'Custom_sms'     	  => '短信服务',
+    'Custom_sms 0'     	  => '关闭',
+    'Custom_sms 1'        => '开通',
+    'Deduction'       	  => '扣费',
     'Company_id'          => '数据归属'
 ];

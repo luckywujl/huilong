@@ -182,7 +182,11 @@ class Recharge extends Backend
     	                ->where('custom_id',$params['charge_custom_id'])  
     	                ->find();
     	              $n = $custom_info['custom_name'];//名称
-    	              $m = $custom_info['custom_tel'];//电话
+    	              if($custom_info['custom_sms']==1) {
+    	                  	$m = $custom_info['custom_tel'];//电话
+    	                  }else {
+    	                  	$m='';
+    	                  }
     	              $a = $params['charge_principal']+$params['charge_subsidy'];//扣款金额
     	              $b = $custom_info['custom_account'];//余额
     	              $params['charge_custom_account'] = $custom_info['custom_account'];  

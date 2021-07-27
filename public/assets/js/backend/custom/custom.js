@@ -36,6 +36,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'custom_account', title: __('Custom_account')},
                         {field: 'custom_principal', title: __('Custom_principal')},
                         {field: 'custom_subsidy', title: __('Custom_subsidy')},
+                        {field: 'custom_sms', title: __('Custom_sms'), searchList: {"0":__('Custom_sms 0'),"1":__('Custom_sms 1')}, formatter: Table.api.formatter.status},
                         {field: 'custom_status', title: __('Custom_status'), searchList: {"0":__('Custom_status 0'),"1":__('Custom_status 1'),"2":__('Custom_status 2')}, formatter: Table.api.formatter.status},
                         //{field: 'company_id', title: __('Company_id')},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
@@ -45,6 +46,23 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
 
             // 为表格绑定事件
             Table.api.bindevent(table);
+            $(document).on("click", ".btn-deduction", function () {
+                var object=prompt("请输入扣费项目：");
+                if (object!==null) {
+                		var cost=prompt("扣除"+object+"金额：");
+                		if (cost!==null) {
+                			$.post("custom/custom/deduction", {object:object,cost:cost},function(response){
+             				   if(response.code == 1){
+                 	   			Toastr.success(response.msg)
+                   		 		$(".btn-refresh").trigger('click');
+                				}else{
+                    				Toastr.error(response.msg)
+               			 	}
+            				}, 'json')
+                		}
+                
+             }
+            });
         },
         add: function () {
             Controller.api.bindevent();

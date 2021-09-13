@@ -406,7 +406,7 @@ class Indetail extends Backend
                 if ($result !== false) {
                 	if($m!=='') {
                 	  //发送短信
-             	     $sendrul = 'http://api.smsbao.com/sms?u=ha_hlgp&p=6ab37e4a4b3b3f7a06a0227acffd4240&m='.$m.'&c=【汇隆果品】尊敬的'.urlencode($n).'，您本次缴费'.urlencode($a).'元，账户余额为'.urldecode($b).'元。';//.urlencode($content);
+             	     $sendrul = 'http://api.smsbao.com/sms?u=luckywujl&p=635fcbe5a0f9a1d9bb83ca8392d0c827&m='.$m.'&c=【汇隆果品】尊敬的'.urlencode($n).'，您本次缴费'.urlencode($a).'元，账户余额为'.urldecode($b).'元。';//.urlencode($content);
                 	  $res = file_get_contents($sendrul);
                 	  //完成短信发送
                 }

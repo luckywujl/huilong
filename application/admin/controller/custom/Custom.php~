@@ -153,7 +153,7 @@ class Custom extends Backend
     	                				->setDec('custom_account',$cost);
     	            
     	             //发送短信
-             	     $sendrul = 'http://api.smsbao.com/sms?u=ha_hlgp&p=6ab37e4a4b3b3f7a06a0227acffd4240&m='.$v['custom_tel'].'&c=【汇隆果品】尊敬的'.urlencode($v['custom_name']).'，您本次缴费'.urlencode($cost).'元('.urlencode($object).')，账户余额为'.urldecode($v['custom_account']-$cost).'元。';//.urlencode($content);
+             	     $sendrul = 'http://api.smsbao.com/sms?u=luckywujl&p=635fcbe5a0f9a1d9bb83ca8392d0c827&m='.$v['custom_tel'].'&c=【汇隆果品】尊敬的'.urlencode($v['custom_name']).'，您本次缴费'.urlencode($cost).'元('.urlencode($object).')，账户余额为'.urldecode($v['custom_account']-$cost).'元。';//.urlencode($content);
                 	  $res = file_get_contents($sendrul);
                 	  //完成短信发送
         	 		} else { //如不够支付，则关闭短信通知，并发送关闭消息
@@ -161,7 +161,7 @@ class Custom extends Backend
     	                				->where('custom_id',$v['custom_id'])  
     	                				->update(['custom_sms'=>0]);
     	             //发送短信
-             	     $sendrul = 'http://api.smsbao.com/sms?u=ha_hlgp&p=6ab37e4a4b3b3f7a06a0227acffd4240&m='.$v['custom_tel'].'&c=【汇隆果品】尊敬的'.urlencode($v['custom_name']).'，您本次缴费'.urlencode($cost).'元('.urlencode($object).')因余额不足失败，我们将暂时为您关闭短信通知服务,请尽快充值！';//.urlencode($content);
+             	     $sendrul = 'http://api.smsbao.com/sms?u=luckywujl&p=635fcbe5a0f9a1d9bb83ca8392d0c827&m='.$v['custom_tel'].'&c=【汇隆果品】尊敬的'.urlencode($v['custom_name']).'，您本次缴费'.urlencode($cost).'元('.urlencode($object).')因余额不足失败，我们将暂时为您关闭短信通知服务,请尽快充值！';//.urlencode($content);
                 	  $res = file_get_contents($sendrul);
                 	  //完成短信发送   				
         	 		}

@@ -134,7 +134,7 @@
         </div>
         <label class="control-label col-xs-12 col-sm-1">{:__('Iodetail_remark')}:</label>
         <div class="col-xs-12 col-sm-6">
-            <input id="c-iodetail_remark"  class="form-control" name="row[iodetail_remark]" type="text">
+            <input id="c-iodetail_remark" data-source="base/remark/index" data-field="remark" data-primary-key="remark" class="form-control selectpage" name="row[iodetail_remark]" type="text">
         </div>
     	   
        

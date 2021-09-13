@@ -2,6 +2,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
 
     var Controller = {
         index: function () {
+        	
         	Controller.api.bindevent();
             // 初始化表格参数配置
             Table.api.init({
@@ -71,6 +72,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
 
             // 为表格绑定事件
             Table.api.bindevent(table);
+            
             //提交
 				$(document).on("click", ".btn-pay", function(){
 				   
@@ -135,7 +137,13 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','printing'], function 
  			   	);
  		   	 
 				});
-				
+				//定时更新时间
+				setInterval(function(){
+  				  //$(".btn-refresh").trigger("click");
+  				 //更新页面时间
+  				 var myDate = new Date();
+  				 $("#c-iodetail_iotime").val(myDate.getFullYear()+'-'+(myDate.getMonth()+1)+'-'+myDate.getDate()+" "+myDate.getHours()+':'+myDate.getMinutes()+':'+myDate.getSeconds());
+			     }, 1000);
 				
 			     
 			   //手动输入车牌号码，从入场记录中读取入场信息
